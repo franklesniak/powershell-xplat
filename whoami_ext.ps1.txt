@@ -1,0 +1,33 @@
+$psObjRyan = New-Object -TypeName psobject
+$psObjRyan | Add-Member -MemberType NoteProperty -Name GivenName -Value "██████╗ ██╗   ██╗ █████╗ ███╗   ██╗
+██╔══██╗╚██╗ ██╔╝██╔══██╗████╗  ██║
+██████╔╝ ╚████╔╝ ███████║██╔██╗ ██║
+██╔══██╗  ╚██╔╝  ██╔══██║██║╚██╗██║
+██║  ██║   ██║   ██║  ██║██║ ╚████║
+╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name SurName -Value "██╗  ██╗███████╗██╗     ██╗     ███████╗██████╗ ███╗   ███╗ █████╗ ███╗   ██╗
+██║ ██╔╝██╔════╝██║     ██║     ██╔════╝██╔══██╗████╗ ████║██╔══██╗████╗  ██║
+█████╔╝ █████╗  ██║     ██║     █████╗  ██████╔╝██╔████╔██║███████║██╔██╗ ██║
+██╔═██╗ ██╔══╝  ██║     ██║     ██╔══╝  ██╔══██╗██║╚██╔╝██║██╔══██║██║╚██╗██║
+██║  ██╗███████╗███████╗███████╗███████╗██║  ██║██║ ╚═╝ ██║██║  ██║██║ ╚████║
+╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Superfluous1 -Value $null
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Twitter -Value "@RyanWMP"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Title -Value "IT Infra Architect"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Company -Value "West Monroe Partners"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name ItInitDate -Value "Monday, January 11, 1999 9:00:00 AM"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Running -Value "...in the 90's is a new way I like to be"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name PrimaryLanguage -Value JScript
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Superfluous2 -Value $null
+$psObjRyan | Add-Member -MemberType NoteProperty -Name HorizontalRule1 -Value "****************************************************************"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name PowerShellWork1 -Value "Automated Microsoft Planner for tracking and reporting."
+$psObjRyan | Add-Member -MemberType NoteProperty -Name PowerShellWork2 -Value "I'm more comfortable with Rest API than piping outputs."
+$psObjRyan | Add-Member -MemberType NoteProperty -Name ForFunOne -Value "Talk to me about LAN parties."
+$psObjRyan | Add-Member -MemberType NoteProperty -Name ForFunTwo -Value "I'm new to Minecraft 10 years later."
+$psObjRyan | Add-Member -MemberType NoteProperty -Name HorizontalRule2 -Value "****************************************************************"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Superfluous3 -Value $null
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Contact1 -Value "pro:linkedin.com/in/ryan-kellerman-895603"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Contact2 -Value "tweet:twitter.com/@RyanWMP"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Contact3 -Value "email:rkellerman@wmp.com"
+$psObjRyan | Add-Member -MemberType NoteProperty -Name Superfluous4 -Value $null
+$psObjRyan

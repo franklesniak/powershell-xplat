@@ -1,0 +1,10 @@
+On host, run: rm C:\\Users\\flesniak/.ssh/known_hosts
+Open the Azure portal
+Revert snapshot for macOS VM
+Change network settings to bridge connection
+Increase macOS terminal font size (windows key + plus, 5 times)
+Start a clean PS 7 prompt on host machine and make the font size 36
+Unlock ARM laptop
+Open PS v5.1 on ARM laptop and set font size to 36
+Open PS v7 on ARM laptop and set font size to 36
+
