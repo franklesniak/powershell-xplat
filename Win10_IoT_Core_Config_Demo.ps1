@@ -1,38 +1,46 @@
-#region Readme
-# This script is intended to be run on against a Windows 10 IoT Core device
+#region Readme #####################################################################
+# This demo script is intended to be run on against a Windows 10 IoT Core device.
+#
 # This can be achieved by first obtaining a Raspberry Pi 2 or Raspberry Pi 3B.
-# Note that the Raspberry Pi 3A+ and 3B+ requires some low-level driver configuration due to
-# limited support from Microsoft, so it's best to avoid them for quick testing.
-# Finally, note that the Raspberry Pi 4 is not supported.
-# The Raspberry Pi 1, Raspberry Pi Zero and Raspberry Pi Zero W are not supported with Windows
-# 10 IoT Coreand they are incompatible with PowerShell Core 6 and PowerShell 7 due to .NET Core
-# lacking support for their CPUs.
+#
+# Note that the Raspberry Pi 3A+ and 3B+ requires some low-level driver configuration
+# due to limited support from Microsoft, so it's best to avoid them for quick testing.
+#
+# Finally, note that the Raspberry Pi 4 and Raspberry Pi 5 are not supported.
+#
+# The Raspberry Pi 1, Raspberry Pi Zero and Raspberry Pi Zero W are not supported with
+# Windows 10 IoT Coreand they are incompatible with PowerShell Core 6 and PowerShell 7
+# due to .NET Core lacking support for their CPUs.
+#
 # Status of other Raspberry Pi devices (compute module) is unknown
 #
-# With the correct device, use the "Windows 10 IoT Core Dashboard" to flash a microSD card with the Windows 10 IoT Core image.
-# I tested this against Windows 10 1809 on a Raspberry Pi 2 (exact version was 10.0.17763.107)
-#endregion Readme
+# With the correct device, use the "Windows 10 IoT Core Dashboard" to flash a microSD
+# card with the Windows 10 IoT Core image.
+#
+# I tested this against Windows 10 1809 on a Raspberry Pi 2 (exact version was
+# 10.0.17763.107)
+#region Readme #####################################################################
 
-#region License
-###############################################################################################
-# Copyright 2020 Frank Lesniak
+#region License ################################################################
+# Copyright 2024 Frank Lesniak
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-# and associated documentation files (the "Software"), to deal in the Software without
-# restriction, including without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in the
+# Software without restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+# Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or
-# substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-# BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-###############################################################################################
-#endregion License
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+# AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#endregion License ################################################################
 
 #region DownloadPowerShell7ForWin10IoTCore
 ##############################################################################################
