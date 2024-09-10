@@ -23,7 +23,7 @@
 
 - Windows 11 on Lenovo ThinkPad T14s Gen 6 (ARM64); Windows PowerShell 5.1 and PowerShell 7.x
 - Raspberry Pi OS on Raspberry Pi 5 (ARM64); PowerShell 7.x
-- Windows 10 1809 on Raspberry Pi 3B (ARM32); Windows PowerShell 5.1
+- Windows 10 Iot Core 1809 on Raspberry Pi 3B (ARM32); Windows PowerShell 5.1
 - Windows RT (version?) on Surface Pro 2 (ARM32); TBD version of Windows PowerShell; TBD PowerShell 7.x
 - Cloud Shell (via Azure portal) (TBD Linux distro running in a container, x86-64); PowerShell 7.x
 - macOS 14.6.x on Mac Mini (2018) (x86-64); PowerShell 7.x
