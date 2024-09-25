@@ -610,6 +610,8 @@ if ($null -ne $PreferZIP) {
 $versionPS = Get-PSVersion
 $boolWindows = Test-Windows
 
+# TODO: Change script logic to download whenever the current version is not up to date?
+
 if ($boolWindows) {
     if ($versionPS.Major -lt 6) {
         # Need to download PowerShell v7
