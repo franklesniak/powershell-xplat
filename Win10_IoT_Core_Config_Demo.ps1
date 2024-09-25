@@ -286,7 +286,6 @@ function Get-FileDownload {
         # Invoke-WebRequest exists; use it
     } else {
         # Invoke-WebRequest does not exist; fall-back to .NET WebClient
-
     }
 }
 
