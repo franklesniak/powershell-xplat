@@ -210,7 +210,7 @@ function Get-DownloadFolder {
     }
 }
 
-function New-WScriptShellCOMObject {
+function Get-WScriptShellCOMObject {
     #region FunctionHeader #########################################################
     # Attempts to create a new COM object "WScript.Shell"; if successful, it returns it
     #
@@ -224,10 +224,10 @@ function New-WScriptShellCOMObject {
     #
     # # Example usage:
     # $objWScriptShell = $null
-    # $boolResult = New-WScriptShellCOMObject ([ref]$objWScriptShell)
+    # $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
     # # If $boolResult is $true, then $objWScriptShell is a WScript.Shell object
     #
-    # Version: 1.0.20240924.0
+    # Version: 1.0.20240925.0
     #endregion FunctionHeader #########################################################
 
     #region License ################################################################
@@ -619,7 +619,7 @@ if ($boolWindows) {
         # Methodology adopted from sysadmin-accelerator project
         # See: GetOperatingSystemProcessorArchitectureUsingOperatingSystemVersion.vbs
         $objWScriptShell = $null
-        $boolResult = New-WScriptShellCOMObject ([ref]$objWScriptShell)
+        $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
         if ($boolResult) {
             # Success! Use the WScript.Shell object
             $objEnvironment = $objWSHShell.Environment('System')
