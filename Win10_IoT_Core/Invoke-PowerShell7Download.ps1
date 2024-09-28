@@ -1,4 +1,4 @@
-# Version 0.1.20240924.0
+# Version 0.2.20240928.0
 
 #region License ####################################################################
 # Copyright (c) 2024 Frank Lesniak
@@ -22,7 +22,16 @@
 #endregion License ####################################################################
 
 param(
-    [switch]$PreferZIP
+    [switch]$PreferZIP,
+    [switch]$Windows,
+    [switch]$Linux,
+    [switch]$macOS,
+    [switch]$ARM64,
+    [switch]$ARM,
+    [switch]$x86,
+    [switch]$x8664,
+    [switch]$x64,
+    [switch]$AMD64
 )
 
 # TODO: Add capability to download to temp folder instead of downloads folder?
@@ -608,7 +617,64 @@ if ($null -ne $PreferZIP) {
 }
 
 $versionPS = Get-PSVersion
-$boolWindows = Test-Windows
+
+#region Determine which OS type was specified, fall back to the one we're on #######
+$boolWindows = $null
+$boolLinux = $null
+$boolMacOS = $null
+
+if ($null -ne $Windows) {
+    if ($Windows.IsPresent) {
+        $boolWindows = $true
+        $boolLinux = $false
+        $boolMacOS = $false
+    } else {
+        $boolWindows = Test-Windows
+        if ($boolWindows) {
+            $boolLinux = $false
+            $boolMacOS = $false
+        }
+    }
+} else {
+    $boolWindows = Test-Windows
+    if ($boolWindows) {
+        $boolLinux = $false
+        $boolMacOS = $false
+    }
+}
+
+if ($null -ne $Linux) {
+    if ($Linux.IsPresent) {
+        $boolWindows = $false
+        $boolLinux = $true
+        $boolMacOS = $false
+    } else {
+        if ($null -eq $boolLinux) {
+            $boolLinux = $IsLinux
+        }
+    }
+} else {
+    if ($null -eq $boolLinux) {
+        $boolLinux = $IsLinux
+    }
+}
+
+if ($null -ne $macOS) {
+    if ($macOS.IsPresent) {
+        $boolWindows = $false
+        $boolLinux = $false
+        $boolMacOS = $true
+    } else {
+        if ($null -eq $boolMacOS) {
+            $boolMacOS = $IsMacOS
+        }
+    }
+} else {
+    if ($null -eq $boolMacOS) {
+        $boolMacOS = $IsMacOS
+    }
+}
+#endregion Determine which OS type was specified, fall back to the one we're on #######
 
 # TODO: Change script logic to download whenever the current version is not up to date?
 
@@ -616,23 +682,77 @@ if ($boolWindows) {
     if ($versionPS.Major -lt 6) {
         # Need to download PowerShell v7
 
-        # Methodology adopted from sysadmin-accelerator project
-        # See: GetOperatingSystemProcessorArchitectureUsingOperatingSystemVersion.vbs
-        $objWScriptShell = $null
-        $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
-        if ($boolResult) {
-            # Success! Use the WScript.Shell object
-            $objEnvironment = $objWSHShell.Environment('System')
-            $strOSProcessorArchitecture = $objEnvironment.Item('PROCESSOR_ARCHITECTURE')
-        } else {
-            # Could not create a WScript.Shell object; fall back to other method(s)
-            $strOSProcessorArchitecture = $null
-            $boolResult = Get-SystemProcessorArchitectureEnvironmentVariableFromWindowsRegistry ([ref]$strOSProcessorArchitecture)
-            if (-not $boolResult) {
-                # TODO: Code more alternatives
-                Write-Warning 'Could not retrieve the OS processor architecture!'
+        #region Determine which processor architecture was specified, fall back to the one we're on
+        $strOSProcessorArchitecture = ''
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            if ($null -ne $ARM64) {
+                if ($ARM64.IsPresent) {
+                    $strOSProcessorArchitecture = 'ARM64'
+                }
             }
         }
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            if ($null -ne $ARM) {
+                if ($ARM.IsPresent) {
+                    $strOSProcessorArchitecture = 'ARM'
+                }
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            if ($null -ne $x86) {
+                if ($x86.IsPresent) {
+                    $strOSProcessorArchitecture = 'x86'
+                }
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            if ($null -ne $x8664) {
+                if ($x8664.IsPresent) {
+                    $strOSProcessorArchitecture = 'AMD64'
+                }
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            if ($null -ne $x64) {
+                if ($x64.IsPresent) {
+                    $strOSProcessorArchitecture = 'AMD64'
+                }
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            if ($null -ne $AMD64) {
+                if ($AMD64.IsPresent) {
+                    $strOSProcessorArchitecture = 'AMD64'
+                }
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+            # Methodology adopted from sysadmin-accelerator project
+            # See: GetOperatingSystemProcessorArchitectureUsingOperatingSystemVersion.vbs
+            $objWScriptShell = $null
+            $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
+            if ($boolResult) {
+                # Success! Use the WScript.Shell object
+                $objEnvironment = $objWSHShell.Environment('System')
+                $strOSProcessorArchitecture = $objEnvironment.Item('PROCESSOR_ARCHITECTURE')
+            } else {
+                # Could not create a WScript.Shell object; fall back to other method(s)
+                $strOSProcessorArchitecture = $null
+                $boolResult = Get-SystemProcessorArchitectureEnvironmentVariableFromWindowsRegistry ([ref]$strOSProcessorArchitecture)
+                if (-not $boolResult) {
+                    # TODO: Code more alternatives
+                    Write-Warning 'Could not retrieve the OS processor architecture!'
+                }
+            }
+        }
+        #endregion Determine which processor architecture was specified, fall back to the one we're on
 
         switch ($strOSProcessorArchitecture) {
             'x86' {
@@ -714,7 +834,55 @@ if ($boolWindows) {
     }
 } else {
     # Not Windows
-    $strDotNetOSArchitecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
+
+    #region Determine which processor architecture was specified, fall back to the one we're on
+    $strDotNetOSArchitecture = ''
+
+    if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
+        if ($null -ne $ARM64) {
+            if ($ARM64.IsPresent) {
+                $strDotNetOSArchitecture = 'Arm64'
+            }
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
+        if ($null -ne $ARM) {
+            if ($ARM.IsPresent) {
+                $strDotNetOSArchitecture = 'Arm'
+            }
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
+        if ($null -ne $x86) {
+            if ($x86.IsPresent) {
+                $strDotNetOSArchitecture = 'X86'
+            }
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
+        if ($null -ne $x8664) {
+            if ($x8664.IsPresent) {
+                $strDotNetOSArchitecture = 'X64'
+            }
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
+        if ($null -ne $AMD64) {
+            if ($AMD64.IsPresent) {
+                $strDotNetOSArchitecture = 'X64'
+            }
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
+        $strDotNetOSArchitecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
+    }
+    #endregion Determine which processor architecture was specified, fall back to the one we're on
+
     if ($IsLinux) {
         switch ($strDotNetOSArchitecture) {
             'X64' {
@@ -756,15 +924,23 @@ if ($boolWindows) {
     if ($null -ne $strTargetFolder) {
         $strTargetPath = Join-Path $strTargetFolder $strPowerShellRelease
         if ((Test-Path $strTargetPath) -eq $false) {
+            $strMessage = 'Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath
             if ($versionPS.Major -ge 5) {
-                Write-Information ('Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath)
+                Write-Information $strMessage
             } else {
-                Write-Host ('Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath)
+                Write-Host $strMessage
             }
             $actionPreferencePreviousProgress = $ProgressPreference
-            $ProgressPreference = 'SilentlyContinue'
+            # $ProgressPreference = 'SilentlyContinue'
             Invoke-WebRequest -Uri $strDownloadURL -OutFile $strTargetPath
-            $ProgressPreference = $actionPreferencePreviousProgress
+            # $ProgressPreference = $actionPreferencePreviousProgress
+
+            $strMessage = 'Finished downloading ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath
+            if ($versionPS.Major -ge 5) {
+                Write-Information $strMessage
+            } else {
+                Write-Host $strMessage
+            }
         } else {
             Write-Host ('PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath)
         }
