@@ -1,4 +1,4 @@
-# Version 0.2.20240928.0
+# Version 0.2.20240928.1
 
 #region License ####################################################################
 # Copyright (c) 2024 Frank Lesniak
@@ -674,6 +674,13 @@ if ($null -ne $macOS) {
         $boolMacOS = $IsMacOS
     }
 }
+
+$strMessage = '$boolWindows = ' + [str]$boolWindows
+Write-Debug $strMessage
+$strMessage = '$boolLinux = ' + [str]$boolLinux
+Write-Debug $strMessage
+$strMessage = '$boolMacOS = ' + [str]$boolMacOS
+Write-Debug $strMessage
 #endregion Determine which OS type was specified, fall back to the one we're on #######
 
 # TODO: Change script logic to download whenever the current version is not up to date?
@@ -752,6 +759,9 @@ if ($boolWindows) {
                 }
             }
         }
+
+        $strMessage = '$strOSProcessorArchitecture = ' + $strOSProcessorArchitecture
+        Write-Debug $strMessage
         #endregion Determine which processor architecture was specified, fall back to the one we're on
 
         switch ($strOSProcessorArchitecture) {
@@ -815,17 +825,23 @@ if ($boolWindows) {
             if ($null -ne $strTargetFolder) {
                 $strTargetPath = Join-Path $strTargetFolder $strPowerShellRelease
                 if ((Test-Path $strTargetPath) -eq $false) {
+                    $strMessage = 'Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath + ' using URL: ' + $strDownloadURL
                     if ($versionPS.Major -ge 5) {
-                        Write-Information ('Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath)
+                        Write-Information $strMessage
                     } else {
-                        Write-Host ('Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath)
+                        Write-Host $strMessage
                     }
                     $actionPreferencePreviousProgress = $ProgressPreference
                     $ProgressPreference = 'SilentlyContinue'
                     Invoke-WebRequest -Uri $strDownloadURL -OutFile $strTargetPath
                     $ProgressPreference = $actionPreferencePreviousProgress
                 } else {
-                    Write-Host ('PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath)
+                    $strMessage = 'PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath
+                    if ($versionPS.Major -ge 5) {
+                        Write-Information $strMessage
+                    } else {
+                        Write-Host $strMessage
+                    }
                 }
             } else {
                 Write-Warning 'Unable to locate suitable folder path for downloads. PowerShell download aborted.'
@@ -881,7 +897,13 @@ if ($boolWindows) {
     if ([string]::IsNullOrEmpty($strDotNetOSArchitecture)) {
         $strDotNetOSArchitecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
     }
+
+    $strMessage = '$strDotNetOSArchitecture = ' + $strDotNetOSArchitecture
+    Write-Debug $strDotNetOSArchitecture
     #endregion Determine which processor architecture was specified, fall back to the one we're on
+
+    $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
+    $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
 
     if ($IsLinux) {
         switch ($strDotNetOSArchitecture) {
@@ -900,7 +922,7 @@ if ($boolWindows) {
         }
 
         # TODO: Determine distribution of Linux and generate the file to download accordingly, store it in $strPowerShellRelease
-
+        # *** THIS IS NOT COMPLETE!!! ***
         $strDownloadURL = 'https://github.com/PowerShell/PowerShell/releases/download/v' + $strPowerShellVersion + '/' + $strPowerShellRelease
     } elseif ($IsMacOS) {
         switch ($strDotNetOSArchitecture) {
@@ -913,12 +935,9 @@ if ($boolWindows) {
         }
 
         # TODO: Generate the file to download programmatically, store it in $strPowerShellRelease
-
+        # *** THIS IS NOT COMPLETE!!! ***
         $strDownloadURL = 'https://github.com/PowerShell/PowerShell/releases/download/v' + $strPowerShellVersion + '/' + $strPowerShellRelease
     }
-
-    $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
-    $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
 
     $strTargetFolder = Get-DownloadFolder
     if ($null -ne $strTargetFolder) {
