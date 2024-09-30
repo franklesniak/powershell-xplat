@@ -707,43 +707,54 @@ function Get-PSVersion {
 
 $versionPS = Get-PSVersion
 
-#region Quit if PowerShell Version is Unsupported ##################################
 if ($versionPS -lt [version]'5.0') {
     Write-Warning 'This script requires PowerShell v5.0 or higher. Please upgrade to PowerShell v5.0 or higher and try again.'
     return # Quit script
-}
-#endregion Quit if PowerShell Version is Unsupported ##################################
+} else {
+    # PowerShell version is supported!
+    $hashtableModuleNameToInstalledModules = @{}
+    $hashtableModuleNameToInstalledModules.Add('PSCompression', @())
+    $refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
+    Get-PowerShellModuleUsingHashtable -ReferenceToHashtable $refHashtableModuleNameToInstalledModules
 
-#region Check for required PowerShell Modules ######################################
-$hashtableModuleNameToInstalledModules = @{}
-$hashtableModuleNameToInstalledModules.Add('PSCompression', @())
-$refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
-Get-PowerShellModuleUsingHashtable -ReferenceToHashtable $refHashtableModuleNameToInstalledModules
+    $hashtableCustomNotInstalledMessageToModuleNames = @{}
 
-$hashtableCustomNotInstalledMessageToModuleNames = @{}
+    $refhashtableCustomNotInstalledMessageToModuleNames = [ref]$hashtableCustomNotInstalledMessageToModuleNames
+    $boolResult = Test-PowerShellModuleInstalledUsingHashtable -ReferenceToHashtableOfInstalledModules $refHashtableModuleNameToInstalledModules -ThrowWarningIfModuleNotInstalled -ReferenceToHashtableOfCustomNotInstalledMessages $refhashtableCustomNotInstalledMessageToModuleNames
 
-$refhashtableCustomNotInstalledMessageToModuleNames = [ref]$hashtableCustomNotInstalledMessageToModuleNames
-$boolResult = Test-PowerShellModuleInstalledUsingHashtable -ReferenceToHashtableOfInstalledModules $refHashtableModuleNameToInstalledModules -ThrowErrorIfModuleNotInstalled -ReferenceToHashtableOfCustomNotInstalledMessages $refhashtableCustomNotInstalledMessageToModuleNames
+    if ($boolResult -eq $false) {
+        return # Quit script
+    } else {
+        # PowerShell module is installed!
+        $boolDoNotCheckForModuleUpdates = $false
+        if ($null -ne $DoNotCheckForModuleUpdates) {
+            if ($DoNotCheckForModuleUpdates.IsPresent -eq $true) {
+                $boolDoNotCheckForModuleUpdates = $true
+            }
+        }
+        if ($boolDoNotCheckForModuleUpdates -eq $false) {
+            Write-Verbose 'Checking for module updates...'
+            $hashtableCustomNotUpToDateMessageToModuleNames = @{}
 
-if ($boolResult -eq $false) {
-    return # Quit script
-}
-#endregion Check for required PowerShell Modules ######################################
-
-#region Check for PowerShell module updates ########################################
-$boolDoNotCheckForModuleUpdates = $false
-if ($null -ne $DoNotCheckForModuleUpdates) {
-    if ($DoNotCheckForModuleUpdates.IsPresent -eq $true) {
-        $boolDoNotCheckForModuleUpdates = $true
+            $refhashtableCustomNotUpToDateMessageToModuleNames = [ref]$hashtableCustomNotUpToDateMessageToModuleNames
+            $boolResult = Test-PowerShellModuleUpdatesAvailableUsingHashtable -ReferenceToHashtableOfInstalledModules $refHashtableModuleNameToInstalledModules -ThrowWarningIfModuleNotInstalled -ThrowWarningIfModuleNotUpToDate -ReferenceToHashtableOfCustomNotInstalledMessages $refhashtableCustomNotInstalledMessageToModuleNames -ReferenceToHashtableOfCustomNotUpToDateMessages $refhashtableCustomNotUpToDateMessageToModuleNames
+            if ($boolResult -eq $false) {
+                return # Quit script
+            } else {
+                $strMessage = 'PowerShell module is present and up-to-date!'
+                if ($versionPS.Major -ge 5) {
+                    Write-Information $strMessage
+                } else {
+                    Write-Host $strMessage
+                }
+            }
+        } else {
+            $strMessage = 'PowerShell module is present! It was not checked for updates'
+            if ($versionPS.Major -ge 5) {
+                Write-Information $strMessage
+            } else {
+                Write-Host $strMessage
+            }
+        }
     }
 }
-if ($boolDoNotCheckForModuleUpdates -eq $false) {
-    Write-Verbose 'Checking for module updates...'
-    $hashtableCustomNotUpToDateMessageToModuleNames = @{}
-
-    $refhashtableCustomNotUpToDateMessageToModuleNames = [ref]$hashtableCustomNotUpToDateMessageToModuleNames
-    $boolResult = Test-PowerShellModuleUpdatesAvailableUsingHashtable -ReferenceToHashtableOfInstalledModules $refHashtableModuleNameToInstalledModules -ThrowErrorIfModuleNotInstalled -ThrowWarningIfModuleNotUpToDate -ReferenceToHashtableOfCustomNotInstalledMessages $refhashtableCustomNotInstalledMessageToModuleNames -ReferenceToHashtableOfCustomNotUpToDateMessages $refhashtableCustomNotUpToDateMessageToModuleNames
-}
-#endregion Check for PowerShell module updates ########################################
-
-Write-Host 'PowerShell module is present and up-to-date!'
