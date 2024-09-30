@@ -1,4 +1,4 @@
-# Version 0.2.20240928.1
+# Version 0.2.20240930.0
 
 #region License ####################################################################
 # Copyright (c) 2024 Frank Lesniak
@@ -675,177 +675,191 @@ if ($null -ne $macOS) {
     }
 }
 
-$strMessage = '$boolWindows = ' + [str]$boolWindows
+$strMessage = '$boolWindows = ' + [string]$boolWindows
 Write-Debug $strMessage
-$strMessage = '$boolLinux = ' + [str]$boolLinux
+$strMessage = '$boolLinux = ' + [string]$boolLinux
 Write-Debug $strMessage
-$strMessage = '$boolMacOS = ' + [str]$boolMacOS
+$strMessage = '$boolMacOS = ' + [string]$boolMacOS
 Write-Debug $strMessage
 #endregion Determine which OS type was specified, fall back to the one we're on #######
 
-# TODO: Change script logic to download whenever the current version is not up to date?
+$boolDownloadSuccessful = $false
 
 if ($boolWindows) {
-    if ($versionPS.Major -lt 6) {
-        # Need to download PowerShell v7
+    # Need to download PowerShell v7
 
-        #region Determine which processor architecture was specified, fall back to the one we're on
-        $strOSProcessorArchitecture = ''
+    #region Determine which processor architecture was specified, fall back to the one we're on
+    $strOSProcessorArchitecture = ''
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            if ($null -ne $ARM64) {
-                if ($ARM64.IsPresent) {
-                    $strOSProcessorArchitecture = 'ARM64'
-                }
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        if ($null -ne $ARM64) {
+            if ($ARM64.IsPresent) {
+                $strOSProcessorArchitecture = 'ARM64'
             }
         }
+    }
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            if ($null -ne $ARM) {
-                if ($ARM.IsPresent) {
-                    $strOSProcessorArchitecture = 'ARM'
-                }
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        if ($null -ne $ARM) {
+            if ($ARM.IsPresent) {
+                $strOSProcessorArchitecture = 'ARM'
             }
         }
+    }
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            if ($null -ne $x86) {
-                if ($x86.IsPresent) {
-                    $strOSProcessorArchitecture = 'x86'
-                }
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        if ($null -ne $x86) {
+            if ($x86.IsPresent) {
+                $strOSProcessorArchitecture = 'x86'
             }
         }
+    }
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            if ($null -ne $x8664) {
-                if ($x8664.IsPresent) {
-                    $strOSProcessorArchitecture = 'AMD64'
-                }
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        if ($null -ne $x8664) {
+            if ($x8664.IsPresent) {
+                $strOSProcessorArchitecture = 'AMD64'
             }
         }
+    }
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            if ($null -ne $x64) {
-                if ($x64.IsPresent) {
-                    $strOSProcessorArchitecture = 'AMD64'
-                }
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        if ($null -ne $x64) {
+            if ($x64.IsPresent) {
+                $strOSProcessorArchitecture = 'AMD64'
             }
         }
+    }
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            if ($null -ne $AMD64) {
-                if ($AMD64.IsPresent) {
-                    $strOSProcessorArchitecture = 'AMD64'
-                }
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        if ($null -ne $AMD64) {
+            if ($AMD64.IsPresent) {
+                $strOSProcessorArchitecture = 'AMD64'
             }
         }
+    }
 
-        if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
-            # Methodology adopted from sysadmin-accelerator project
-            # See: GetOperatingSystemProcessorArchitectureUsingOperatingSystemVersion.vbs
-            $objWScriptShell = $null
-            $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
-            if ($boolResult) {
-                # Success! Use the WScript.Shell object
-                $objEnvironment = $objWSHShell.Environment('System')
-                $strOSProcessorArchitecture = $objEnvironment.Item('PROCESSOR_ARCHITECTURE')
+    if ([string]::IsNullOrEmpty($strOSProcessorArchitecture)) {
+        # Methodology adopted from sysadmin-accelerator project
+        # See: GetOperatingSystemProcessorArchitectureUsingOperatingSystemVersion.vbs
+        $objWScriptShell = $null
+        $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
+        if ($boolResult) {
+            # Success! Use the WScript.Shell object
+            $objEnvironment = $objWSHShell.Environment('System')
+            $strOSProcessorArchitecture = $objEnvironment.Item('PROCESSOR_ARCHITECTURE')
+        } else {
+            # Could not create a WScript.Shell object; fall back to other method(s)
+            $strOSProcessorArchitecture = $null
+            $boolResult = Get-SystemProcessorArchitectureEnvironmentVariableFromWindowsRegistry ([ref]$strOSProcessorArchitecture)
+            if (-not $boolResult) {
+                # TODO: Code more alternatives
+                Write-Warning 'Could not retrieve the OS processor architecture!'
+            }
+        }
+    }
+
+    $strMessage = '$strOSProcessorArchitecture = ' + $strOSProcessorArchitecture
+    Write-Debug $strMessage
+    #endregion Determine which processor architecture was specified, fall back to the one we're on
+
+    switch ($strOSProcessorArchitecture) {
+        'x86' {
+            $strPowerShellProcessorArchitecture = 'win-x86'
+            $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
+            $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
+            if ($boolPreferZIP) {
+                $boolUseMSI = $false
             } else {
-                # Could not create a WScript.Shell object; fall back to other method(s)
-                $strOSProcessorArchitecture = $null
-                $boolResult = Get-SystemProcessorArchitectureEnvironmentVariableFromWindowsRegistry ([ref]$strOSProcessorArchitecture)
-                if (-not $boolResult) {
-                    # TODO: Code more alternatives
-                    Write-Warning 'Could not retrieve the OS processor architecture!'
-                }
+                $boolUseMSI = $true
             }
         }
-
-        $strMessage = '$strOSProcessorArchitecture = ' + $strOSProcessorArchitecture
-        Write-Debug $strMessage
-        #endregion Determine which processor architecture was specified, fall back to the one we're on
-
-        switch ($strOSProcessorArchitecture) {
-            'x86' {
-                $strPowerShellProcessorArchitecture = 'win-x86'
-                $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
-                $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
+        'AMD64' {
+            $strPowerShellProcessorArchitecture = 'win-x64'
+            $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
+            $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
+            if ($boolPreferZIP) {
+                $boolUseMSI = $false
+            } else {
+                $boolUseMSI = $true
+            }
+        }
+        'ARM64' {
+            $strPowerShellProcessorArchitecture = 'win-arm64'
+            $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
+            $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
+            if ([version]$strPowerShellVersion -ge $versionARM64MSI) {
                 if ($boolPreferZIP) {
                     $boolUseMSI = $false
                 } else {
                     $boolUseMSI = $true
                 }
-            }
-            'AMD64' {
-                $strPowerShellProcessorArchitecture = 'win-x64'
-                $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
-                $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
-                if ($boolPreferZIP) {
-                    $boolUseMSI = $false
-                } else {
-                    $boolUseMSI = $true
-                }
-            }
-            'ARM64' {
-                $strPowerShellProcessorArchitecture = 'win-arm64'
-                $strPowerShellReleaseMetadata = 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
-                $strPowerShellVersion = (Invoke-RestMethod -Uri $strPowerShellReleaseMetadata).StableReleaseTag -replace '^v'
-                if ([version]$strPowerShellReleaseMetadata -ge $versionARM64MSI) {
-                    if ($boolPreferZIP) {
-                        $boolUseMSI = $false
-                    } else {
-                        $boolUseMSI = $true
-                    }
-                } else {
-                    $boolUseMSI = $false
-                }
-            }
-            'ARM' {
-                $strPowerShellProcessorArchitecture = 'win-arm32'
-                $strPowerShellVersion = $strNewestARM32Release
+            } else {
                 $boolUseMSI = $false
             }
-            default {
-                #TODO: Confirm PowerShell 7 doesn't work on IA64 Windows for funzies
-                Write-Error ('Unknown processor architecture: ' + $strOSProcessorArchitecture)
-                $strPowerShellProcessorArchitecture = ''
-                $strPowerShellVersion = ''
-            }
+        }
+        'ARM' {
+            $strPowerShellProcessorArchitecture = 'win-arm32'
+            $strPowerShellVersion = $strNewestARM32Release
+            $boolUseMSI = $false
+        }
+        default {
+            #TODO: Confirm PowerShell 7 doesn't work on IA64 Windows for funzies
+            Write-Error ('Unknown processor architecture: ' + $strOSProcessorArchitecture)
+            $strPowerShellProcessorArchitecture = ''
+            $strPowerShellVersion = ''
+        }
+    }
+
+    if ($strPowerShellProcessorArchitecture -ne '') {
+        $strPowerShellReleaseWithoutExtension = 'PowerShell-' + $strPowerShellVersion + '-' + $strPowerShellProcessorArchitecture
+        if ($boolUseMSI) {
+            $strPowerShellRelease = $strPowerShellReleaseWithoutExtension + '.msi'
+            $strPowerShellReleaseType = 'MSI'
+        } else {
+            $strPowerShellRelease = $strPowerShellReleaseWithoutExtension + '.zip'
+            $strPowerShellReleaseType = 'ZIP'
         }
 
-        if ($strPowerShellProcessorArchitecture -ne '') {
-            if ($boolUseMSI) {
-                $strPowerShellRelease = 'PowerShell-' + $strPowerShellVersion + '-' + $strPowerShellProcessorArchitecture + '.msi'
-            } else {
-                $strPowerShellRelease = 'PowerShell-' + $strPowerShellVersion + '-' + $strPowerShellProcessorArchitecture + '.zip'
-            }
+        $strDownloadURL = 'https://github.com/PowerShell/PowerShell/releases/download/v' + $strPowerShellVersion + '/' + $strPowerShellRelease
 
-            $strDownloadURL = 'https://github.com/PowerShell/PowerShell/releases/download/v' + $strPowerShellVersion + '/' + $strPowerShellRelease
-
-            $strTargetFolder = Get-DownloadFolder
-            if ($null -ne $strTargetFolder) {
-                $strTargetPath = Join-Path $strTargetFolder $strPowerShellRelease
-                if ((Test-Path $strTargetPath) -eq $false) {
-                    $strMessage = 'Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath + ' using URL: ' + $strDownloadURL
-                    if ($versionPS.Major -ge 5) {
-                        Write-Information $strMessage
-                    } else {
-                        Write-Host $strMessage
-                    }
-                    $actionPreferencePreviousProgress = $ProgressPreference
-                    $ProgressPreference = 'SilentlyContinue'
-                    Invoke-WebRequest -Uri $strDownloadURL -OutFile $strTargetPath
-                    $ProgressPreference = $actionPreferencePreviousProgress
+        $strTargetFolder = Get-DownloadFolder
+        if ($null -ne $strTargetFolder) {
+            $strTargetPath = Join-Path $strTargetFolder $strPowerShellRelease
+            if ((Test-Path $strTargetPath) -eq $false) {
+                $strMessage = 'Downloading PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath + ' using URL: ' + $strDownloadURL
+                if ($versionPS.Major -ge 5) {
+                    Write-Information $strMessage
                 } else {
-                    $strMessage = 'PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath
+                    Write-Host $strMessage
+                }
+                $actionPreferencePreviousProgress = $ProgressPreference
+                $ProgressPreference = 'SilentlyContinue'
+                Invoke-WebRequest -Uri $strDownloadURL -OutFile $strTargetPath
+                $ProgressPreference = $actionPreferencePreviousProgress
+                if (Test-Path $strTargetPath) {
+                    $boolDownloadSuccessful = $true
+                    $strMessage = 'Finished downloading ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath
                     if ($versionPS.Major -ge 5) {
                         Write-Information $strMessage
                     } else {
                         Write-Host $strMessage
                     }
+                } else {
+                    $strMessage = 'Download of ' + $strDownloadURL + ' to ' + $strTargetPath + ' failed! The file did not exist after the download was attempted'
+                    Write-Warning $strMessage
                 }
             } else {
-                Write-Warning 'Unable to locate suitable folder path for downloads. PowerShell download aborted.'
+                $boolDownloadSuccessful = $true
+                $strMessage = 'PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath
+                if ($versionPS.Major -ge 5) {
+                    Write-Information $strMessage
+                } else {
+                    Write-Host $strMessage
+                }
             }
+        } else {
+            Write-Warning 'Unable to locate suitable folder path for downloads. PowerShell download aborted.'
         }
     }
 } else {
@@ -923,6 +937,9 @@ if ($boolWindows) {
 
         # TODO: Determine distribution of Linux and generate the file to download accordingly, store it in $strPowerShellRelease
         # *** THIS IS NOT COMPLETE!!! ***
+        $strPowerShellReleaseType = 'TBD'
+        $strPowerShellReleaseWithoutExtension = 'TBD'
+        $strPowerShellRelease = $strPowerShellReleaseWithoutExtension + '.tbd'
         $strDownloadURL = 'https://github.com/PowerShell/PowerShell/releases/download/v' + $strPowerShellVersion + '/' + $strPowerShellRelease
     } elseif ($IsMacOS) {
         switch ($strDotNetOSArchitecture) {
@@ -936,6 +953,9 @@ if ($boolWindows) {
 
         # TODO: Generate the file to download programmatically, store it in $strPowerShellRelease
         # *** THIS IS NOT COMPLETE!!! ***
+        $strPowerShellReleaseType = 'TBD'
+        $strPowerShellReleaseWithoutExtension = 'TBD'
+        $strPowerShellRelease = $strPowerShellReleaseWithoutExtension + '.tbd'
         $strDownloadURL = 'https://github.com/PowerShell/PowerShell/releases/download/v' + $strPowerShellVersion + '/' + $strPowerShellRelease
     }
 
@@ -950,20 +970,48 @@ if ($boolWindows) {
                 Write-Host $strMessage
             }
             $actionPreferencePreviousProgress = $ProgressPreference
-            # $ProgressPreference = 'SilentlyContinue'
+            $ProgressPreference = 'SilentlyContinue'
             Invoke-WebRequest -Uri $strDownloadURL -OutFile $strTargetPath
-            # $ProgressPreference = $actionPreferencePreviousProgress
-
-            $strMessage = 'Finished downloading ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath
+            $ProgressPreference = $actionPreferencePreviousProgress
+            if (Test-Path $strTargetPath) {
+                $boolDownloadSuccessful = $true
+                $strMessage = 'Finished downloading ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' to ' + $strTargetPath
+                if ($versionPS.Major -ge 5) {
+                    Write-Information $strMessage
+                } else {
+                    Write-Host $strMessage
+                }
+            } else {
+                $strMessage = 'Download of ' + $strDownloadURL + ' to ' + $strTargetPath + ' failed! The file did not exist after the download was attempted'
+                Write-Warning $strMessage
+            }
+        } else {
+            $boolDownloadSuccessful = $true
+            $strMessage = 'PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath
             if ($versionPS.Major -ge 5) {
                 Write-Information $strMessage
             } else {
                 Write-Host $strMessage
             }
-        } else {
-            Write-Host ('PowerShell ' + $strPowerShellVersion + ' for ' + $strPowerShellProcessorArchitecture + ' already downloaded to ' + $strTargetPath)
         }
     } else {
         Write-Warning 'Unable to locate suitable folder path for downloads. PowerShell download aborted.'
     }
 }
+
+$psobjectReturn = New-Object -TypeName PSObject
+$psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadSuccess' -Value $boolDownloadSuccessful
+if (-not $boolDownloadSuccessful) {
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFilePath' -Value $null
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'FolderPathContainingDownload' -Value $null
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileName' -Value $null
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileNameWithoutExtension' -Value $null
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileType' -Value $null
+} else {
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFilePath' -Value $strTargetPath
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'FolderPathContainingDownload' -Value $strTargetFolder
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileName' -Value $strPowerShellRelease
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileNameWithoutExtension' -Value $strPowerShellReleaseWithoutExtension
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileType' -Value $strPowerShellReleaseType
+}
+return $psobjectReturn
