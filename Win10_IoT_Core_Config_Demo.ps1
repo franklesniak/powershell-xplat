@@ -315,6 +315,7 @@ $PSVersionTable
 # Note the PSVersion
 # ... and note the PSEdition!
 
+# Return to the host system
 Exit-PSSession
 #endregion Part 3: Try some things on Windows 10 IoT Core #############################
 
@@ -360,7 +361,37 @@ $results.FolderPathContainingDownload = $strHostFolderPath
 $results.DownloadedFilePath = Join-Path $strHostFolderPath ($results.DownloadedFileName)
 #endregion Part 4: Download PowerShell 7 for Windows 10 IoT Core and transfer it ######
 
+#region Part 5: Extract PowerShell 7 and Enable Remoting ###########################
+# Enter the PSSession for the IoT Core device
+Enter-PSSession $PSSession
 
+$strDownloadFolder = Get-DownloadFolder
+Set-Location $strDownloadFolder
+
+# Load the JSON file
+$strJSONFileName = 'PowerShellDownloadResults.json'
+$results = Get-Content (Join-Path $strDownloadFolder $strJSONFileName) | ConvertFrom-Json
+
+# Look! We have our object!
+$results
+
+# Get the Program Files path - note: this technique is not fully backward compatible!
+$strProgramFilesFolderPath = $env:ProgramW6432
+if ([string]::IsNullOrEmpty($strProgramFilesFolderPath)) {
+    $strProgramFilesFolderPath = $env:ProgramFiles
+    if ([string]::IsNullOrEmpty($strProgramFilesFolderPath)) {
+        Write-Warning 'Uh, we couldn''t find a Program Files folder?'
+    }
+}
+$strPowerShell7Folder = Join-Path $strProgramFilesFolderPath 'PowerShell'
+$strPowerShell7Folder = Join-Path $strPowerShell7Folder '7'
+
+Expand-Archive -Path $results.DownloadedFilePath -DestinationPath $strPowerShell7Folder
+Set-Location $strPowerShell7Folder
+
+# Enable PowerShell 7 remoting:
+.\Install-PowerShellRemoting.ps1 -PowerShellHome .
+# You will get disconnected. This is expected!
 
 
 
@@ -1001,7 +1032,7 @@ function Split-StringOnLiteralString {
 
 function Expand-ZIPBackwardCompatible {
     # This function takes 1-2 positional arguments
-    # 
+    #
     # If two arguments are specified:
     #   The first argument is the destination path, i.e., the path to which we extract the ZIP.
     #   The second argument is the path to the ZIP file
@@ -1101,7 +1132,7 @@ function Expand-ZIPBackwardCompatible {
                     $intCounter = 1
                     $strTempFolderPath = [System.IO.Path]::GetTempPath()
                     $strZIPFileName = Split-Path -Path $strProviderZIPPath -Leaf
-                    $comObjectShellApplicationNamespaceZIPItems | `
+                    $comObjectShellApplicationNamespaceZIPItems |
                         ForEach-Object {
                             $comObjectShellApplicationNamespaceDestinationFolder.CopyHere($_, (4 + 16 + 256))
 
