@@ -1,4 +1,4 @@
-# Version 0.2.20240930.0
+# Version 0.2.20241001.0
 
 #region License ####################################################################
 # Copyright (c) 2024 Frank Lesniak
@@ -1003,12 +1003,14 @@ $psobjectReturn = New-Object -TypeName PSObject
 $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadSuccess' -Value $boolDownloadSuccessful
 if (-not $boolDownloadSuccessful) {
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFilePath' -Value $null
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedVersion' -Value $null
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'FolderPathContainingDownload' -Value $null
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileName' -Value $null
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileNameWithoutExtension' -Value $null
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileType' -Value $null
 } else {
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFilePath' -Value $strTargetPath
+    $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedVersion' -Value $strPowerShellVersion
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'FolderPathContainingDownload' -Value $strTargetFolder
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileName' -Value $strPowerShellRelease
     $psobjectReturn | Add-Member -MemberType NoteProperty -Name 'DownloadedFileNameWithoutExtension' -Value $strPowerShellReleaseWithoutExtension
