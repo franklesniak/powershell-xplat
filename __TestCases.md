@@ -16,7 +16,7 @@
 - Cloud Shell
 - Raspberry Pi OS on Raspberry Pi
 - Windows on Raspberry Pi (ARM32)
-- Itanium
+- (deferred) Itanium
 - Surface 2
 
 ## Operating System and Platform List
@@ -28,7 +28,7 @@
 - Cloud Shell (via Azure portal) (TBD Linux distro running in a container, x86-64); PowerShell 7.x
 - macOS 14.6.x on Mac Mini (2018) (x86-64); PowerShell 7.x
 - macOS 14.6.x on Macbook Pro M1 (ARM64); PowerShell 7.x
-- Windows Server 2008 R2 on HP zx6000 Workstation (IA64); Windows PowerShell 2.0
+- (deferred) Windows Server 2008 R2 on HP zx6000 Workstation (IA64); Windows PowerShell 2.0
 
 ## Open Questions / Need to Investigate
 
