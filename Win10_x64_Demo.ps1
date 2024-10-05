@@ -1,4 +1,4 @@
-# PowerShell v7.0.0 demonstration on Windows 10 x64
+# PowerShell v7.x demonstration on Windows 10 x64
 # Written by Frank Lesniak
 # Last updated: 2020-04-28
 
@@ -20,9 +20,9 @@ $arrArgumentList = @("/i", (Join-Path $strDownloadFolder $strPowerShellZIPFileNa
 Start-Process -FilePath $strPathToMsiExec -ArgumentList $arrArgumentList -Wait
 
 # Install OpenSSH Features
-$arrFeaturesToInstall = @(Get-WindowsCapability -Online | Where-Object {$_.Name -like "OpenSSH*"} | `
-    Where-Object {$_.State -ne ([Microsoft.Dism.Commands.PackageFeatureState]::Installed)} | `
-	ForEach-Object {$_.Name})
+$arrFeaturesToInstall = @(Get-WindowsCapability -Online | Where-Object { $_.Name -like "OpenSSH*" } |
+        Where-Object { $_.State -ne ([Microsoft.Dism.Commands.PackageFeatureState]::Installed) } |
+        ForEach-Object { $_.Name })
 $arrFeaturesToInstall | ForEach-Object {Add-WindowsCapability -Online -Name $_}
 
 # Start the SSH Server service

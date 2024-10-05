@@ -1,89 +1,75 @@
-##############################################################################################
-# Copyright (c) 2020, Frank Lesniak
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without modification, are
-# permitted provided that the following conditions are met:
-#
-#  Redistributions of source code must retain the above copyright notice, this list of
-#  conditions and the following disclaimer.
-#
-#  Redistributions in binary form must reproduce the above copyright notice, this list of
-#  conditions and the following disclaimer in the documentation and/or other materials
-#  provided with the distribution.
-#
-#  Neither the name of Frank Lesniak nor the names of any contributors may be used to
-#  endorse or promote products derived from this software without specific prior written
-#  permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-##############################################################################################
+#region Readme #####################################################################
+# This demo script is intended to be run on macOS. It demonstrates how to install
+# PowerShell on macOS using Homebrew, and how to get the version of macOS using
+# PowerShell. It also shows how to enable SSH Remoting on macOS and how to connect
+# to a macOS system using PowerShell Remoting.
+#region Readme #####################################################################
 
-# PowerShell v7.0.0 demonstration on macOS
-# Written by Frank Lesniak
-# Last updated: 2020-04-28
+#region License ################################################################
+# Copyright 2024 Frank Lesniak
 
-##########################################
-# Part 1: Install PowerShell
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in the
+# Software without restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+# Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
 
-# Install Homebrew
-# You likely will need to enter your password when you run this command, so keep an eye on it:
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+# AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#endregion License ################################################################
+
+#region Part 0: Install Homebrew ###################################################
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 # Confirm no errors occurred. If they did, re-run the command.
+#endregion Part 0: Install Homebrew ###################################################
 
+#region Part 1: Install PowerShell #################################################
 # Install PowerShell (latest version):
-brew cask install powershell
-# Again, you may need to enter your password during the installation process.
+brew install --cask powershell
 
 # To later update PowerShell:
-#brew update
-#brew cask upgrade powershell
+# brew update
+# brew upgrade --cask powershell
 
 # Start PowerShell
 pwsh
 
 # Display PowerShell version info
 $PSVersionTable
+#endregion Part 1: Install PowerShell #################################################
 
-##########################################
-# Part 2: Get Operating System info
-
+#region Part 2: Get Basic Operating System Info ####################################
 # Show that we're on a mac
-$isMacOS
+$IsMacOS
 
-# ...and we're not on Linux or Windows
-$isLinux
+# ...and we're not on Linux:
+$IsLinux
 
 # ...and not on Windows
-$isWindows
+$IsWindows
 
-# No Get-ComputerInfo :(
 Get-ComputerInfo
 # Previous command will throw error
+# No Get-ComputerInfo :(
+#endregion Part 2: Get Basic Operating System Info ####################################
 
-# But... we can get the version of macOS:
-if (Test-Path variable:\isMacOS)
-{
+#region Part 3: Get macOS Version ##################################################
+if (Test-Path variable:\isMacOS) {
     # Is PowerShell v6 or Newer
-    if ($isMacOS)
-    {
+    if ($isMacOS) {
         $versionMacOS = [version](sw_vers -productVersion)
-    } `
-    else `
-    {
+    } else {
         $versionMacOS = $null
     }
-} `
-else `
-{
+} else {
     # Cannot be MacOS if PowerShell 5 or older
 	$versionMacOS = $null
 }
@@ -93,10 +79,9 @@ $versionMacOS
 
 # Exit PowerShell
 exit
+#endregion Part 3: Get macOS Version ##################################################
 
-##########################################
-# Part 3: Remotely Connect to macOS
-
+#region Part 4: Remotely Connect to macOS ##########################################
 # Make sure SSH Remoting is enabled by following these steps:
 # --Open System Preferences.
 # --Click on Sharing.
@@ -114,9 +99,11 @@ sudo nano /private/etc/ssh/sshd_config
 #Subsystem	powershell	/usr/local/bin/pwsh -sshs -NoLogo -NoProfile
 # Save the file (Ctrl+O, enter), then exit (Ctrl+X)
 
+# Restart the SSH Server
 sudo launchctl stop com.openssh.sshd
 sudo launchctl start com.openssh.sshd
 
 # macOS is now listening for connections and can be connected-to using Enter-PSSession
 # To do this, run a command like this from another system:
 # Enter-PSSession -HostName SFEL1WKS99 -UserName flesniak
+#endregion Part 4: Remotely Connect to macOS ##########################################
