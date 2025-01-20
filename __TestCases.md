@@ -26,14 +26,14 @@
 - Windows 10 Iot Core 1809 on Raspberry Pi 3B (ARM32); Windows PowerShell 5.1
 - Windows RT (version?) on Surface Pro 2 (ARM32); TBD version of Windows PowerShell; TBD PowerShell 7.x
 - Cloud Shell (via Azure portal) (TBD Linux distro running in a container, x86-64); PowerShell 7.x
-- macOS 14.6.x on Mac Mini (2018) (x86-64); PowerShell 7.x
-- macOS 14.6.x on Macbook Pro M1 (ARM64); PowerShell 7.x
+- macOS 15.0.x on Mac Mini (2018) (x86-64); PowerShell 7.x
+- macOS 15.0.x on Macbook Pro M1 (ARM64); PowerShell 7.x
 - (deferred) Windows Server 2008 R2 on HP zx6000 Workstation (IA64); Windows PowerShell 2.0
 
 ## Open Questions / Need to Investigate
 
 - Can you install PowerShell 7.x from the Windows Store on Windows RT?
-- Does Windows PowerShell work exist for IA64?
+- Does Windows PowerShell exist for IA64?
 - If Windows PowerShell does exist for IA64, can you upgrade it to Windows PowerShell 5.1?
 
 ## Parking Lot
