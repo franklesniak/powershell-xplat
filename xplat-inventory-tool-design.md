@@ -47,7 +47,7 @@ Here is the list of properties that I plan to have in my CMDB:
   - macOS: Combine `ProductName` + `ProductVersion` from `sw_vers` ("macOS 10.12.6")
   - Linux: `PRETTY_NAME` extracted directly from operating system tools that provide OS information (e.g., `/etc/os-release`); field might contain values such as "Ubuntu 16.04.7 LTS (Xenial Xerus)"
 - **OSVersionString**: The complete version string directly reported by the operating system, capturing the complete, unparsed version identifier. This field serves as the raw source for subsequent version parsing, preserving the original format for reference or troubleshooting.
-  - Windows: The major.minor.build portions are derived from `Win32_OperatingSystem` -> `Version` or the string returned from `[System.Environment]::OSVersion` (which is more accurate? which is more reliable?), while the revision is extracted from the "product version" from the file `C:\Windows\System32\ntoskrnl.exe`
+  - Windows: The major.minor.build portions are derived from `Win32_OperatingSystem` -> `Version`, while the revision is extracted from the "product version" from the file `C:\Windows\System32\ntoskrnl.exe`. I will use programmatically get the path to `C:\Windows\System32` when accessing `ntoskrnl.exe`, which is readable to standard users.
   - macOS: Extracted from `sw_vers` -> `ProductVersion`. Note: Excludes build strings (e.g., "16G1510", which we instead store in `OSBuildString`)
   - Linux: `VERSION_ID` extracted directly from operating system tools that provide OS information (e.g., `/etc/os-release`), or parsed `VERSION`
 - **OSVersionMajorString**: The major version number of the operating system as a string, extracted from `OSVersionString`. This field retains the raw text representation of the major version, serving as the source for integer conversion and preserving non-numeric cases.
@@ -86,7 +86,7 @@ Here is the list of properties that I plan to have in my CMDB:
   - Windows: e.g., "10.0.22621.2861" (from the "product version" from the file `C:\Windows\System32\ntoskrnl.exe`)
   - macOS: e.g., "16.7.0" (Darwin kernel from `uname -r`)
   - Linux: e.g., "4.15.0-34-generic" (from `uname --kernel-version`)
-- **OSArchitecture**: The operating system's system architecture, indicating the processor instruction set (e.g., x86, x86-64, ARM32, ARM64). This field is reserved for future use and captures hardware compatibility details when implemented.
+- **OSArchitecture**: The operating system's system architecture, indicating the processor instruction set (e.g., x86, x86-64, ARM32, ARM64, IA64). This field is reserved for future use and captures hardware compatibility details when implemented.
   - Windows: "x86-64" (e.g., from `[System.Environment]::Is64BitOperatingSystem`)
   - macOS: "x86-64" or "ARM64" (post-Sierra)
   - Linux: "x86_64" (from `uname -m`)
