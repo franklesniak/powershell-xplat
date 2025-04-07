@@ -71,7 +71,7 @@ if (Test-Path variable:\isMacOS) {
     }
 } else {
     # Cannot be MacOS if PowerShell 5 or older
-	$versionMacOS = $null
+    $versionMacOS = $null
 }
 
 # Display the version of macOS
