@@ -18476,12 +18476,18 @@ function Invoke-CrossPlatformOSInventory {
                 }
             }
             if ($arrVersionParts.Count -ge 3) {
-                $psobjectOutput.OSVersionPatchString = $arrVersionParts[2]  # "20250207"
-                # Check if it's a build first
                 if ($hashtableOSInfo.ContainsKey('BUILD') -and $hashtableOSInfo['BUILD'] -eq $arrVersionParts[2]) {
-                    $psobjectOutput.OSBuildString = $hashtableOSInfo['BUILD']  # Set "20250207" as build
+                    $psobjectOutput.OSBuildString = $hashtableOSInfo['BUILD']
+                    $psobjectOutput.OSVersionPatchString = $null
+                    # Parse as OSVersionBuild
+                    $intOSVersionBuild = -1
+                    $ref = [ref]$intOSVersionBuild
+                    if ([int]::TryParse($hashtableOSInfo['BUILD'], $ref)) {
+                        # Successfully parsed build version
+                        $psobjectOutput.OSVersionBuild = $ref.Value # Explicitly update the variable
+                    }
                 } else {
-                    # Only parse as patch if it's not a build
+                    $psobjectOutput.OSVersionPatchString = $arrVersionParts[2]
                     $intOSVersionPatch = -1
                     $ref = [ref]$intOSVersionPatch
                     if ([int]::TryParse($psobjectOutput.OSVersionPatchString, $ref)) {
