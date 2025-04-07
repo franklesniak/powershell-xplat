@@ -18395,6 +18395,40 @@ function Invoke-CrossPlatformOSInventory {
             }
         }
         #
+        # Special case handling for Ubuntu and CBL-Mariner
+        if ($hashtableOSInfo.ContainsKey('ID')) {
+            $strOSID = $hashtableOSInfo['ID']
+            if ($strOSID -eq 'ubuntu' -or $strOSID -eq 'mariner') {
+                if ($hashtableOSInfo.ContainsKey('VERSION') -and $hashtableOSInfo.ContainsKey('VERSION_ID')) {
+                    $strVersion = $hashtableOSInfo['VERSION']
+                    $strVersionID = $hashtableOSInfo['VERSION_ID']
+
+                    # For Ubuntu: Extract patch from VERSION if VERSION_ID is shorter
+                    if ($strOSID -eq 'ubuntu' -and $strVersion -match '(\d+\.\d+(?:\.\d+)?)') {
+                        $strFullVersion = $Matches[1]
+                        if ($strVersionID -eq $strFullVersion.Substring(0, [Math]::Min($strVersionID.Length, $strFullVersion.Length))) {
+                            $hashtableOSInfo['VERSION_ID'] = $strFullVersion  # Only override if VERSION_ID is a prefix
+                        }
+                    }
+                    # For CBL-Mariner: Use VERSION directly if it contains more detail
+                    elseif ($strOSID -eq 'mariner' -and $strVersion.Length -gt $strVersionID.Length) {
+                        # Remove trailing text like "LTS" if present
+                        if ($strVersion -match '(\d+\.\d+(?:\.\d+)?)') {
+                            $strFullVersion = $Matches[1]  # e.g., "2.0.20240829"
+                            $hashtableOSInfo['VERSION_ID'] = $strFullVersion
+                            # If the version looks like a build (e.g., "20240829"), store separately
+                            $arrVersionParts = Split-StringOnLiteralString $strFullVersion '.'
+                            if ($arrVersionParts.Count -ge 3 -and $arrVersionParts[2].Length -gt 6) {
+                                $hashtableOSInfo['BUILD'] = $arrVersionParts[2]  # e.g., "20240829"
+                            }
+                        } else {
+                            $hashtableOSInfo['VERSION_ID'] = $strVersion  # Fallback
+                        }
+                    }
+                }
+            }
+        }
+        #
         # Map hashtable fields to PSObject properties for Linux
         $psobjectOutput.OSType = 'Linux'  # Static for Linux systems
         #
@@ -18413,7 +18447,7 @@ function Invoke-CrossPlatformOSInventory {
             $psobjectOutput.OSPrettyName = $hashtableOSInfo['PRETTY_NAME']
         }
         #
-        # OSVersionString: Prefer VERSION_ID, fallback to VERSION
+        # OSVersionString: Prefer VERSION_ID, fallback to VERSION (already overridden if needed)
         if ($hashtableOSInfo.ContainsKey('VERSION_ID')) {
             $psobjectOutput.OSVersionString = $hashtableOSInfo['VERSION_ID']
         } elseif ($hashtableOSInfo.ContainsKey('VERSION')) {
@@ -18441,8 +18475,6 @@ function Invoke-CrossPlatformOSInventory {
                     $psobjectOutput.OSVersionMinor = $intOSVersionMinor
                 }
             }
-            # TODO: Ubuntu doesn't record its patch in VERSION_ID; but it's record
-            # in VERSION (e.g., '24.04.1 LTS (Noble Numbat)')
             if ($arrVersionParts.Count -ge 3) {
                 $psobjectOutput.OSVersionPatchString = $arrVersionParts[2]
                 $intOSVersionPatch = -1
@@ -18451,6 +18483,8 @@ function Invoke-CrossPlatformOSInventory {
                     # Successfully parsed patch version
                     $intOSVersionPatch = $ref.Value  # Explicitly update the variable
                     $psobjectOutput.OSVersionPatch = $intOSVersionPatch
+                } elseif ($hashtableOSInfo.ContainsKey('BUILD')) {
+                    $psobjectOutput.OSBuildString = $hashtableOSInfo['BUILD']  # e.g., "20240829" for CBL-Mariner
                 }
             }
         }
