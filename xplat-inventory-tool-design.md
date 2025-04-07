@@ -88,7 +88,7 @@ Here is the list of properties that I plan to have in my CMDB:
   - Linux: e.g., "4.15.0-34-generic" (from `uname --kernel-version`)
 - **OSArchitecture**: The operating system's system architecture, indicating the processor instruction set (e.g., x86, x86-64, ARM32, ARM64, IA64). This field is reserved for future use and captures hardware compatibility details when implemented.
   - Windows: "x86-64" (e.g., from `[System.Environment]::Is64BitOperatingSystem`)
-  - macOS: "x86-64" or "ARM64" (post-Sierra)
+  - macOS: "x86-64" or "arm64" (from `uname -m`)
   - Linux: "x86_64" (from `uname -m`)
 
 ## Implementation Notes/Pseudocode
