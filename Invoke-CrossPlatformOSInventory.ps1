@@ -228,7 +228,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # .NOTES
         # Version: 1.0.20250106.0
-    
+
         #region License ####################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -252,14 +252,14 @@ function Invoke-CrossPlatformOSInventory {
         # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ####################################################
-    
+
         if (Test-Path variable:\PSVersionTable) {
             return ($PSVersionTable.PSVersion)
         } else {
             return ([version]('1.0'))
         }
     }
-    
+
     function Test-Windows {
         # .SYNOPSIS
         # Returns $true if PowerShell is running on Windows; otherwise, returns
@@ -308,7 +308,7 @@ function Invoke-CrossPlatformOSInventory {
         # processing.
         #
         # Version: 1.1.20250106.1
-    
+
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -331,11 +331,11 @@ function Invoke-CrossPlatformOSInventory {
         # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
         # USE OR OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ########################################################
-    
+
         param (
             [version]$PSVersion = ([version]'0.0')
         )
-    
+
         function Get-PSVersion {
             # .SYNOPSIS
             # Returns the version of PowerShell that is running.
@@ -365,7 +365,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250106.0
-    
+
             #region License ####################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -389,14 +389,14 @@ function Invoke-CrossPlatformOSInventory {
             # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ####################################################
-    
+
             if (Test-Path variable:\PSVersionTable) {
                 return ($PSVersionTable.PSVersion)
             } else {
                 return ([version]('1.0'))
             }
         }
-    
+
         if ($PSVersion -ne ([version]'0.0')) {
             if ($PSVersion.Major -ge 6) {
                 return $IsWindows
@@ -455,7 +455,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # .NOTES
         # Version: 1.0.20250407.1
-    
+
         #region License ############################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -477,12 +477,12 @@ function Invoke-CrossPlatformOSInventory {
         # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ############################################################
-    
+
         param (
             [ref]$ReferenceToOSCaption = ([ref]$null),
             [version]$PSVersion = ([version]'0.0')
         )
-    
+
         #region FunctionsToSupportErrorHandling ####################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
@@ -558,7 +558,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 2.0.20250215.1
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -583,14 +583,14 @@ function Invoke-CrossPlatformOSInventory {
             # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
             # OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ################################################
-    
+
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
             } else {
                 return ([ref]$null)
             }
         }
-    
+
         function Test-ErrorOccurred {
             # .SYNOPSIS
             # Checks to see if an error occurred during a time period, i.e.,
@@ -701,7 +701,7 @@ function Invoke-CrossPlatformOSInventory {
             # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
             # Version: 2.0.20250215.0
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -730,9 +730,9 @@ function Invoke-CrossPlatformOSInventory {
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
             )
-    
+
             # TODO: Validate input
-    
+
             $boolErrorOccurred = $false
             if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                 # Both not $null
@@ -754,11 +754,11 @@ function Invoke-CrossPlatformOSInventory {
                     $boolErrorOccurred = $true
                 }
             }
-    
+
             return $boolErrorOccurred
         }
         #endregion FunctionsToSupportErrorHandling ####################################
-    
+
         function Get-PSVersion {
             # .SYNOPSIS
             # Returns the version of PowerShell that is running.
@@ -788,7 +788,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250106.0
-    
+
             #region License ####################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -812,40 +812,40 @@ function Invoke-CrossPlatformOSInventory {
             # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ####################################################
-    
+
             if (Test-Path variable:\PSVersionTable) {
                 return ($PSVersionTable.PSVersion)
             } else {
                 return ([version]('1.0'))
             }
         }
-    
+
         trap {
             # Intentionally left empty to prevent terminating errors from halting
             # processing
         }
-    
+
         if ($PSVersion -ne ([version]'0.0')) {
             $refPSVersion = [ref]$PSVersion
         } else {
             $versionPS = Get-PSVersion
             $refPSVersion = [ref]$versionPS
         }
-    
+
         # Retrieve the newest error on the stack prior to doing work
         $refLastKnownError = Get-ReferenceToLastError
-    
+
         # Store current error preference; we will restore it after we do the work of
         # this function
         $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
         # Set ErrorActionPreference to SilentlyContinue; this will suppress error
         # output. Terminating errors will not output anything, kick to the empty trap
         # statement and then continue on. Likewise, non-terminating errors will also
         # not output anything, but they do not kick to the trap statement; they simply
         # continue on.
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
         # The below line is a "one liner" version of the following code; it must be one
         # line in order for error handling to work correctly!
         ###############################################################################
@@ -871,32 +871,32 @@ function Invoke-CrossPlatformOSInventory {
         # }
         ###############################################################################
         $intFunctionReturn = 0; if (($refPSVersion.Value).Major -ge 3) { $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Caption from Win32_OperatingSystem"); if ($arrCIMInstanceOS.Count -eq 0) { return -1 }; $ReferenceToOSCaption.Value = ($arrCIMInstanceOS[0]).Caption; if ($arrCIMInstanceOS.Count -gt 1) { $intFunctionReturn += 1 } } else { $arrManagementObjectOS = @(Get-WmiObject -Query "Select Caption from Win32_OperatingSystem"); if ($arrManagementObjectOS.Count -eq 0) { return -2 }; $ReferenceToOSCaption.Value = ($arrManagementObjectOS[0]).Caption; if ($arrManagementObjectOS.Count -gt 1) { $intFunctionReturn += 2 } }
-    
+
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
         # Retrieve the newest error on the error stack
         $refNewestCurrentError = Get-ReferenceToLastError
-    
+
         if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
             # Error occurred
-    
+
             # Return failure indicator:
             return -3
         } else {
             # No error occurred
-    
+
             # Operating system Caption string is stored in
             # $ReferenceToOSCaption.Value
             if ([string]::IsNullOrEmpty($ReferenceToOSCaption.Value)) {
                 # No Caption information found; this is an error
                 return -4
             }
-    
+
             return 0
         }
     }
-    
+
     function Get-WindowsOSProcessorArchitecture {
         # .SYNOPSIS
         # Determines the processor architecture (instruction set) of the
@@ -948,7 +948,7 @@ function Invoke-CrossPlatformOSInventory {
         # processor architecture (instruction set) of the operating system.
         #
         # Version: 1.0.20250406.1
-    
+
         #region License ####################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -972,7 +972,7 @@ function Invoke-CrossPlatformOSInventory {
         # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ####################################################
-    
+
         #region Acknowledgements ###########################################
         # Microsoft, for providing a current reference on the SYSTEM_INFO
         # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -996,11 +996,11 @@ function Invoke-CrossPlatformOSInventory {
         # SYSTEM_INFO struct and additional architectures:
         # http://masm32.com/board/index.php?topic=3401.0
         #endregion Acknowledgements ###########################################
-    
+
         param (
             [ref]$ReferenceToOSProcessorArchitecture = ([ref]$null)
         )
-    
+
         function Test-RegistryValue {
             # .SYNOPSIS
             # Tests to determine whether a registry value exists in the Windows
@@ -1072,7 +1072,7 @@ function Invoke-CrossPlatformOSInventory {
             # but it is.
             #
             # Version: 1.0.20250406.1
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -1097,19 +1097,19 @@ function Invoke-CrossPlatformOSInventory {
             # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
             # OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ################################################
-    
+
             param (
                 [ref]$RefPathToRegistryKey = ([ref]$null),
                 [string]$PathToRegistryKey = '',
                 [ref]$RefNameOfRegistryValue = ([ref]$null),
                 [string]$NameOfRegistryValue = ''
             )
-    
+
             if ([string]::IsNullOrEmpty($RefPathToRegistryKey.Value) -and [string]::IsNullOrEmpty($PathToRegistryKey)) {
                 Write-Error -Message 'Either RefPathToRegistryKey or PathToRegistryKey must be specified.'
                 return $false
             }
-    
+
             # Specifying an empty string for the name of the registry value is
             # valid; it would mean the "default" value of the registry key.
             # However, if both RefNameOfRegistryValue and NameOfRegistryValue
@@ -1118,7 +1118,7 @@ function Invoke-CrossPlatformOSInventory {
                 Write-Error -Message 'Either RefNameOfRegistryValue or NameOfRegistryValue must be specified.'
                 return $false
             }
-    
+
             if (-not [string]::IsNullOrEmpty($RefPathToRegistryKey.Value)) {
                 $refActualPathToRegistryKey = $RefPathToRegistryKey
             } else {
@@ -1129,7 +1129,7 @@ function Invoke-CrossPlatformOSInventory {
             } else {
                 $refActualNameOfRegistryValue = [ref]$NameOfRegistryValue
             }
-    
+
             if (Test-Path -LiteralPath $refActualPathToRegistryKey.Value) {
                 $registryKey = Get-Item -LiteralPath $refActualPathToRegistryKey.Value
                 if ($null -ne $registryKey.GetValue($refActualNameOfRegistryValue.Value, $null)) {
@@ -1141,7 +1141,7 @@ function Invoke-CrossPlatformOSInventory {
                 return $false
             }
         }
-    
+
         $strRegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
         $strValueName = 'PROCESSOR_ARCHITECTURE'
         if (Test-RegistryValue -PathToRegistryKey $strRegistryPath -NameOfRegistryValue $strValueName) {
@@ -1154,7 +1154,7 @@ function Invoke-CrossPlatformOSInventory {
             return $false
         }
     }
-    
+
     function Get-WindowsKernelVersion {
         # .SYNOPSIS
         # Gets the version of the Windows kernel.
@@ -1296,7 +1296,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # .NOTES
         # Version: 1.0.20250406.0
-    
+
         #region License ############################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -1318,7 +1318,7 @@ function Invoke-CrossPlatformOSInventory {
         # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ############################################################
-    
+
         param (
             [ref]$ReferenceToSystemVersion = ([ref]$null),
             [ref]$ReferenceToStringVersion = ([ref]$null),
@@ -1327,7 +1327,7 @@ function Invoke-CrossPlatformOSInventory {
             [string]$OSProcessorArchitecture = '',
             [string]$ProcessProcessorArchitecture = ''
         )
-    
+
         #region FunctionsToSupportErrorHandling ####################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
@@ -1403,7 +1403,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 2.0.20250215.1
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -1428,14 +1428,14 @@ function Invoke-CrossPlatformOSInventory {
             # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
             # OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ################################################
-    
+
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
             } else {
                 return ([ref]$null)
             }
         }
-    
+
         function Test-ErrorOccurred {
             # .SYNOPSIS
             # Checks to see if an error occurred during a time period, i.e.,
@@ -1546,7 +1546,7 @@ function Invoke-CrossPlatformOSInventory {
             # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
             # Version: 2.0.20250215.0
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -1575,9 +1575,9 @@ function Invoke-CrossPlatformOSInventory {
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
             )
-    
+
             # TODO: Validate input
-    
+
             $boolErrorOccurred = $false
             if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                 # Both not $null
@@ -1599,11 +1599,11 @@ function Invoke-CrossPlatformOSInventory {
                     $boolErrorOccurred = $true
                 }
             }
-    
+
             return $boolErrorOccurred
         }
         #endregion FunctionsToSupportErrorHandling ####################################
-    
+
         function Get-WindowsNativeSystemPath {
             # .SYNOPSIS
             # On Windows, gets the OS-native, non-redirected system path (e.g.,
@@ -1689,7 +1689,7 @@ function Invoke-CrossPlatformOSInventory {
             # architecture.
             #
             # Version: 1.0.20250406.1
-    
+
             #region License ########################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -1712,13 +1712,13 @@ function Invoke-CrossPlatformOSInventory {
             # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
             # USE OR OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ########################################################
-    
+
             param (
                 [ref]$ReferenceToSystemPath = ([ref]$null),
                 [string]$OSProcessorArchitecture = '',
                 [string]$ProcessProcessorArchitecture = ''
             )
-    
+
             function Get-WindowsOSProcessorArchitecture {
                 # .SYNOPSIS
                 # Determines the processor architecture (instruction set) of the
@@ -1770,7 +1770,7 @@ function Invoke-CrossPlatformOSInventory {
                 # processor architecture (instruction set) of the operating system.
                 #
                 # Version: 1.0.20250406.1
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -1794,7 +1794,7 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 #region Acknowledgements ###########################################
                 # Microsoft, for providing a current reference on the SYSTEM_INFO
                 # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -1818,11 +1818,11 @@ function Invoke-CrossPlatformOSInventory {
                 # SYSTEM_INFO struct and additional architectures:
                 # http://masm32.com/board/index.php?topic=3401.0
                 #endregion Acknowledgements ###########################################
-    
+
                 param (
                     [ref]$ReferenceToOSProcessorArchitecture = ([ref]$null)
                 )
-    
+
                 function Test-RegistryValue {
                     # .SYNOPSIS
                     # Tests to determine whether a registry value exists in the Windows
@@ -1894,7 +1894,7 @@ function Invoke-CrossPlatformOSInventory {
                     # but it is.
                     #
                     # Version: 1.0.20250406.1
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -1919,19 +1919,19 @@ function Invoke-CrossPlatformOSInventory {
                     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                     # OTHER DEALINGS IN THE SOFTWARE.
                     #endregion License ################################################
-    
+
                     param (
                         [ref]$RefPathToRegistryKey = ([ref]$null),
                         [string]$PathToRegistryKey = '',
                         [ref]$RefNameOfRegistryValue = ([ref]$null),
                         [string]$NameOfRegistryValue = ''
                     )
-    
+
                     if ([string]::IsNullOrEmpty($RefPathToRegistryKey.Value) -and [string]::IsNullOrEmpty($PathToRegistryKey)) {
                         Write-Error -Message 'Either RefPathToRegistryKey or PathToRegistryKey must be specified.'
                         return $false
                     }
-    
+
                     # Specifying an empty string for the name of the registry value is
                     # valid; it would mean the "default" value of the registry key.
                     # However, if both RefNameOfRegistryValue and NameOfRegistryValue
@@ -1940,7 +1940,7 @@ function Invoke-CrossPlatformOSInventory {
                         Write-Error -Message 'Either RefNameOfRegistryValue or NameOfRegistryValue must be specified.'
                         return $false
                     }
-    
+
                     if (-not [string]::IsNullOrEmpty($RefPathToRegistryKey.Value)) {
                         $refActualPathToRegistryKey = $RefPathToRegistryKey
                     } else {
@@ -1951,7 +1951,7 @@ function Invoke-CrossPlatformOSInventory {
                     } else {
                         $refActualNameOfRegistryValue = [ref]$NameOfRegistryValue
                     }
-    
+
                     if (Test-Path -LiteralPath $refActualPathToRegistryKey.Value) {
                         $registryKey = Get-Item -LiteralPath $refActualPathToRegistryKey.Value
                         if ($null -ne $registryKey.GetValue($refActualNameOfRegistryValue.Value, $null)) {
@@ -1963,7 +1963,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $false
                     }
                 }
-    
+
                 $strRegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
                 $strValueName = 'PROCESSOR_ARCHITECTURE'
                 if (Test-RegistryValue -PathToRegistryKey $strRegistryPath -NameOfRegistryValue $strValueName) {
@@ -1976,7 +1976,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $false
                 }
             }
-    
+
             function Get-WindowsProcessProcessorArchitecture {
                 # .SYNOPSIS
                 # Gets the processor architecture of the current process, assuming the
@@ -2031,7 +2031,7 @@ function Invoke-CrossPlatformOSInventory {
                 # process.
                 #
                 # Version: 1.0.20250406.1
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -2055,7 +2055,7 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 #region Acknowledgements ###########################################
                 # Microsoft, for providing a current reference on the SYSTEM_INFO
                 # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -2079,11 +2079,11 @@ function Invoke-CrossPlatformOSInventory {
                 # SYSTEM_INFO struct and additional architectures:
                 # http://masm32.com/board/index.php?topic=3401.0
                 #endregion Acknowledgements ###########################################
-    
+
                 param (
                     [ref]$ReferenceToProcessProcessorArchitecture = ([ref]$null)
                 )
-    
+
                 if ($null -ne $env:PROCESSOR_ARCHITECTURE) {
                     $ReferenceToProcessProcessorArchitecture.Value = $env:PROCESSOR_ARCHITECTURE
                     return $true
@@ -2091,7 +2091,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $false
                 }
             }
-    
+
             function Test-ProcessorArchitectureIs32Bit {
                 # .SYNOPSIS
                 # Tests a string that contains the processor architecture to determine
@@ -2171,7 +2171,7 @@ function Invoke-CrossPlatformOSInventory {
                 # "AMD64").
                 #
                 # Version: 1.0.20250406.1
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -2195,7 +2195,7 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 #region Acknowledgements ###########################################
                 # Microsoft, for providing a current reference on the SYSTEM_INFO
                 # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -2219,16 +2219,16 @@ function Invoke-CrossPlatformOSInventory {
                 # SYSTEM_INFO struct and additional architectures:
                 # http://masm32.com/board/index.php?topic=3401.0
                 #endregion Acknowledgements ###########################################
-    
+
                 param (
                     [ref]$ReferenceToProcessorArchitectureIs32Bit = ([ref]$null),
                     [string]$ProcessorArchitecture = ''
                 )
-    
+
                 if ([string]::IsNullOrEmpty($ProcessorArchitecture)) {
                     return -1
                 }
-    
+
                 switch ($ProcessorArchitecture.ToUpper()) {
                     'X86' {
                         $ReferenceToProcessorArchitectureIs32Bit.Value = $true
@@ -2255,7 +2255,7 @@ function Invoke-CrossPlatformOSInventory {
                     }
                 }
             }
-    
+
             function Test-ProcessorArchitectureIs64Bit {
                 # .SYNOPSIS
                 # Tests a string that contains the processor architecture to determine
@@ -2335,7 +2335,7 @@ function Invoke-CrossPlatformOSInventory {
                 # "AMD64").
                 #
                 # Version: 1.0.20250406.1
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -2359,7 +2359,7 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 #region Acknowledgements ###########################################
                 # Microsoft, for providing a current reference on the SYSTEM_INFO
                 # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -2383,16 +2383,16 @@ function Invoke-CrossPlatformOSInventory {
                 # SYSTEM_INFO struct and additional architectures:
                 # http://masm32.com/board/index.php?topic=3401.0
                 #endregion Acknowledgements ###########################################
-    
+
                 param (
                     [ref]$ReferenceToProcessorArchitectureIs64Bit = ([ref]$null),
                     [string]$ProcessorArchitecture = ''
                 )
-    
+
                 if ([string]::IsNullOrEmpty($ProcessorArchitecture)) {
                     return -1
                 }
-    
+
                 switch ($ProcessorArchitecture.ToUpper()) {
                     'X86' {
                         $ReferenceToProcessorArchitectureIs64Bit.Value = $false
@@ -2419,7 +2419,7 @@ function Invoke-CrossPlatformOSInventory {
                     }
                 }
             }
-    
+
             if ([string]::IsNullOrEmpty($OSProcessorArchitecture)) {
                 $strOSProcessorArchitecture = ''
                 $boolSuccess = Get-WindowsOSProcessorArchitecture -ReferenceToOSProcessorArchitecture ([ref]$strOSProcessorArchitecture)
@@ -2430,7 +2430,7 @@ function Invoke-CrossPlatformOSInventory {
             } else {
                 $refOSProcessorArchitecture = [ref]$OSProcessorArchitecture
             }
-    
+
             if ([string]::IsNullOrEmpty($ProcessProcessorArchitecture)) {
                 $strProcessProcessorArchitecture = ''
                 $boolSuccess = Get-WindowsProcessProcessorArchitecture -ReferenceToProcessProcessorArchitecture ([ref]$strProcessProcessorArchitecture)
@@ -2441,14 +2441,14 @@ function Invoke-CrossPlatformOSInventory {
             } else {
                 $refProcessProcessorArchitecture = [ref]$ProcessProcessorArchitecture
             }
-    
+
             #region Determine OS bit width #########################################
             $bool64BitOSProcessorArchitecture = $false
             $intReturnCode = Test-ProcessorArchitectureIs64Bit -ReferenceToProcessorArchitectureIs64Bit ([ref]$bool64BitOSProcessorArchitecture) -ProcessorArchitecture ($refOSProcessorArchitecture.Value)
             if ($intReturnCode -ne 0) {
                 return -3
             }
-    
+
             $bool32BitOSProcessorArchitecture = $false
             if (-not $bool64BitOSProcessorArchitecture) {
                 $intReturnCode = Test-ProcessorArchitectureIs32Bit -ReferenceToProcessorArchitectureIs32Bit ([ref]$bool32BitOSProcessorArchitecture) -ProcessorArchitecture ($refOSProcessorArchitecture.Value)
@@ -2456,20 +2456,20 @@ function Invoke-CrossPlatformOSInventory {
                     return -4
                 }
             }
-    
+
             if ((-not $bool64BitOSProcessorArchitecture) -and (-not $bool32BitOSProcessorArchitecture)) {
                 # OS is both not 32-bit and not 64-bit--wut?
                 return -5
             }
             #endregion Determine OS bit width #########################################
-    
+
             #region Determine process bit width ####################################
             $bool64BitProcessProcessorArchitecture = $false
             $intReturnCode = Test-ProcessorArchitectureIs64Bit -ReferenceToProcessorArchitectureIs64Bit ([ref]$bool64BitProcessProcessorArchitecture) -ProcessorArchitecture ($refProcessProcessorArchitecture.Value)
             if ($intReturnCode -ne 0) {
                 return -6
             }
-    
+
             $bool32BitProcessProcessorArchitecture = $false
             if (-not $bool64BitProcessProcessorArchitecture) {
                 $intReturnCode = Test-ProcessorArchitectureIs32Bit -ReferenceToProcessorArchitectureIs32Bit ([ref]$bool32BitProcessProcessorArchitecture) -ProcessorArchitecture ($refProcessProcessorArchitecture.Value)
@@ -2477,13 +2477,13 @@ function Invoke-CrossPlatformOSInventory {
                     return -7
                 }
             }
-    
+
             if ((-not $bool64BitProcessProcessorArchitecture) -and (-not $bool32BitProcessProcessorArchitecture)) {
                 # Process is both not 32-bit and not 64-bit--wut?
                 return -8
             }
             #endregion Determine process bit width ####################################
-    
+
             if ($bool64BitOSProcessorArchitecture -and $bool32BitProcessProcessorArchitecture) {
                 # 32-bit process on 64-bit OS
                 # Need to get and return sysnative folder
@@ -2496,7 +2496,7 @@ function Invoke-CrossPlatformOSInventory {
                 } else {
                     return -9
                 }
-    
+
                 $strSysnativePath = Join-Path -Path $strWindowsPath -ChildPath 'Sysnative'
                 if (-not (Test-Path -LiteralPath $strSysnativePath)) {
                     # The C:\Windows\Sysnative path did not exist. This could happen on
@@ -2504,13 +2504,13 @@ function Invoke-CrossPlatformOSInventory {
                     # KB942615
                     return -10
                 }
-    
+
                 $ReferenceToSystemPath.Value = $strSysnativePath
                 return 0
             } else {
                 # Either 32-bit process on 32-bit OS, or 64-bit process on 64-bit OS
                 # Need to get and return the system32 folder
-    
+
                 if (-not [string]::IsNullOrEmpty([System.Environment]::SystemDirectory)) {
                     $strWindowsSystemPath = [System.Environment]::SystemDirectory
                 } elseif (-not [string]::IsNullOrEmpty($env:windir)) {
@@ -2520,17 +2520,17 @@ function Invoke-CrossPlatformOSInventory {
                 } else {
                     return -11
                 }
-    
+
                 if (-not (Test-Path -LiteralPath $strWindowsSystemPath)) {
                     # The C:\Windows\System32 path did not exist.
                     return -12
                 }
-    
+
                 $ReferenceToSystemPath.Value = [System.Environment]::SystemDirectory
                 return 0
             }
         }
-    
+
         function Convert-StringToFlexibleVersion {
             # .SYNOPSIS
             # Converts a string to a version object. However, when the string contains
@@ -2830,7 +2830,7 @@ function Invoke-CrossPlatformOSInventory {
             # allowing it to skip the determination of the PowerShell engine version.
             #
             # Version: 1.0.20250218.0
-    
+
             #region License ########################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -2853,14 +2853,14 @@ function Invoke-CrossPlatformOSInventory {
             # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
             # USE OR OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ########################################################
-    
+
             param (
                 [ref]$ReferenceToVersionObject = ([ref]$null),
                 [ref]$ReferenceArrayOfLeftoverStrings = ([ref]$null),
                 [string]$StringToConvert = '',
                 [version]$PSVersion = ([version]'0.0')
             )
-    
+
             function Convert-StringToVersionSafely {
                 # .SYNOPSIS
                 # Attempts to convert a string to a System.Version object.
@@ -2920,7 +2920,7 @@ function Invoke-CrossPlatformOSInventory {
                 # to a System.Version object.
                 #
                 # Version: 1.0.20250215.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -2944,12 +2944,12 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 param (
                     [ref]$ReferenceToVersionObject = ([ref]$null),
                     [string]$StringToConvert = ''
                 )
-    
+
                 #region FunctionsToSupportErrorHandling ############################
                 function Get-ReferenceToLastError {
                     # .SYNOPSIS
@@ -3025,7 +3025,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 2.0.20250215.1
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -3050,14 +3050,14 @@ function Invoke-CrossPlatformOSInventory {
                     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                     # OTHER DEALINGS IN THE SOFTWARE.
                     #endregion License ################################################
-    
+
                     if ($Error.Count -gt 0) {
                         return ([ref]($Error[0]))
                     } else {
                         return ([ref]$null)
                     }
                 }
-    
+
                 function Test-ErrorOccurred {
                     # .SYNOPSIS
                     # Checks to see if an error occurred during a time period, i.e.,
@@ -3168,7 +3168,7 @@ function Invoke-CrossPlatformOSInventory {
                     # ReferenceToLaterError must be a reference to $null ([ref]$null).
                     #
                     # Version: 2.0.20250215.0
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -3197,9 +3197,9 @@ function Invoke-CrossPlatformOSInventory {
                         [ref]$ReferenceToEarlierError = ([ref]$null),
                         [ref]$ReferenceToLaterError = ([ref]$null)
                     )
-    
+
                     # TODO: Validate input
-    
+
                     $boolErrorOccurred = $false
                     if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                         # Both not $null
@@ -3221,38 +3221,38 @@ function Invoke-CrossPlatformOSInventory {
                             $boolErrorOccurred = $true
                         }
                     }
-    
+
                     return $boolErrorOccurred
                 }
                 #endregion FunctionsToSupportErrorHandling ############################
-    
+
                 trap {
                     # Intentionally left empty to prevent terminating errors from
                     # halting processing
                 }
-    
+
                 # Retrieve the newest error on the stack prior to doing work
                 $refLastKnownError = Get-ReferenceToLastError
-    
+
                 # Store current error preference; we will restore it after we do the
                 # work of this function
                 $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                 # Set ErrorActionPreference to SilentlyContinue; this will suppress
                 # error output. Terminating errors will not output anything, kick to
                 # the empty trap statement and then continue on. Likewise, non-
                 # terminating errors will also not output anything, but they do not
                 # kick to the trap statement; they simply continue on.
                 $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                 $ReferenceToVersionObject.Value = [version]$StringToConvert
-    
+
                 # Restore the former error preference
                 $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                 # Retrieve the newest error on the error stack
                 $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                 if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                     # Error occurred; return failure indicator:
                     return $false
@@ -3261,7 +3261,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $true
                 }
             }
-    
+
             function Split-StringOnLiteralString {
                 # .SYNOPSIS
                 # Splits a string into an array using a literal string as the splitter.
@@ -3333,7 +3333,7 @@ function Invoke-CrossPlatformOSInventory {
                 # converts $null to an empty string before splitting the string.
                 #
                 # Version: 3.0.20250211.1
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -3357,15 +3357,15 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 param (
                     [string]$StringToSplit = '',
                     [string]$Splitter = ''
                 )
-    
+
                 $strSplitterInRegEx = [regex]::Escape($Splitter)
                 $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
-    
+
                 # The following code forces the function to return an array, always,
                 # even when there are zero or one elements in the array
                 $intElementCount = 1
@@ -3388,7 +3388,7 @@ function Invoke-CrossPlatformOSInventory {
                     return ($result)
                 }
             }
-    
+
             function Convert-StringToInt32Safely {
                 # .SYNOPSIS
                 # Attempts to convert a string to a System.Int32.
@@ -3447,7 +3447,7 @@ function Invoke-CrossPlatformOSInventory {
                 # to a System.Int32 object.
                 #
                 # Version: 1.0.20250215.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -3471,12 +3471,12 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 param (
                     [ref]$ReferenceToInt32 = ([ref]$null),
                     [string]$StringToConvert = ''
                 )
-    
+
                 #region FunctionsToSupportErrorHandling ############################
                 function Get-ReferenceToLastError {
                     # .SYNOPSIS
@@ -3552,7 +3552,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 2.0.20250215.1
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -3577,14 +3577,14 @@ function Invoke-CrossPlatformOSInventory {
                     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                     # OTHER DEALINGS IN THE SOFTWARE.
                     #endregion License ################################################
-    
+
                     if ($Error.Count -gt 0) {
                         return ([ref]($Error[0]))
                     } else {
                         return ([ref]$null)
                     }
                 }
-    
+
                 function Test-ErrorOccurred {
                     # .SYNOPSIS
                     # Checks to see if an error occurred during a time period, i.e.,
@@ -3695,7 +3695,7 @@ function Invoke-CrossPlatformOSInventory {
                     # ReferenceToLaterError must be a reference to $null ([ref]$null).
                     #
                     # Version: 2.0.20250215.0
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -3724,9 +3724,9 @@ function Invoke-CrossPlatformOSInventory {
                         [ref]$ReferenceToEarlierError = ([ref]$null),
                         [ref]$ReferenceToLaterError = ([ref]$null)
                     )
-    
+
                     # TODO: Validate input
-    
+
                     $boolErrorOccurred = $false
                     if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                         # Both not $null
@@ -3748,38 +3748,38 @@ function Invoke-CrossPlatformOSInventory {
                             $boolErrorOccurred = $true
                         }
                     }
-    
+
                     return $boolErrorOccurred
                 }
                 #endregion FunctionsToSupportErrorHandling ############################
-    
+
                 trap {
                     # Intentionally left empty to prevent terminating errors from
                     # halting processing
                 }
-    
+
                 # Retrieve the newest error on the stack prior to doing work
                 $refLastKnownError = Get-ReferenceToLastError
-    
+
                 # Store current error preference; we will restore it after we do the
                 # work of this function
                 $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                 # Set ErrorActionPreference to SilentlyContinue; this will suppress
                 # error output. Terminating errors will not output anything, kick to
                 # the empty trap statement and then continue on. Likewise, non-
                 # terminating errors will also not output anything, but they do not
                 # kick to the trap statement; they simply continue on.
                 $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                 $ReferenceToInt32.Value = [int32]$StringToConvert
-    
+
                 # Restore the former error preference
                 $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                 # Retrieve the newest error on the error stack
                 $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                 if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                     # Error occurred; return failure indicator:
                     return $false
@@ -3788,7 +3788,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $true
                 }
             }
-    
+
             function Convert-StringToInt64Safely {
                 # .SYNOPSIS
                 # Attempts to convert a string to a System.Int64.
@@ -3847,7 +3847,7 @@ function Invoke-CrossPlatformOSInventory {
                 # to a System.Int64 object.
                 #
                 # Version: 1.0.20250215.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -3871,12 +3871,12 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 param (
                     [ref]$ReferenceToInt64 = ([ref]$null),
                     [string]$StringToConvert = ''
                 )
-    
+
                 #region FunctionsToSupportErrorHandling ############################
                 function Get-ReferenceToLastError {
                     # .SYNOPSIS
@@ -3952,7 +3952,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 2.0.20250215.1
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -3977,14 +3977,14 @@ function Invoke-CrossPlatformOSInventory {
                     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                     # OTHER DEALINGS IN THE SOFTWARE.
                     #endregion License ################################################
-    
+
                     if ($Error.Count -gt 0) {
                         return ([ref]($Error[0]))
                     } else {
                         return ([ref]$null)
                     }
                 }
-    
+
                 function Test-ErrorOccurred {
                     # .SYNOPSIS
                     # Checks to see if an error occurred during a time period, i.e.,
@@ -4095,7 +4095,7 @@ function Invoke-CrossPlatformOSInventory {
                     # ReferenceToLaterError must be a reference to $null ([ref]$null).
                     #
                     # Version: 2.0.20250215.0
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -4124,9 +4124,9 @@ function Invoke-CrossPlatformOSInventory {
                         [ref]$ReferenceToEarlierError = ([ref]$null),
                         [ref]$ReferenceToLaterError = ([ref]$null)
                     )
-    
+
                     # TODO: Validate input
-    
+
                     $boolErrorOccurred = $false
                     if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                         # Both not $null
@@ -4148,38 +4148,38 @@ function Invoke-CrossPlatformOSInventory {
                             $boolErrorOccurred = $true
                         }
                     }
-    
+
                     return $boolErrorOccurred
                 }
                 #endregion FunctionsToSupportErrorHandling ############################
-    
+
                 trap {
                     # Intentionally left empty to prevent terminating errors from
                     # halting processing
                 }
-    
+
                 # Retrieve the newest error on the stack prior to doing work
                 $refLastKnownError = Get-ReferenceToLastError
-    
+
                 # Store current error preference; we will restore it after we do the
                 # work of this function
                 $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                 # Set ErrorActionPreference to SilentlyContinue; this will suppress
                 # error output. Terminating errors will not output anything, kick to
                 # the empty trap statement and then continue on. Likewise, non-
                 # terminating errors will also not output anything, but they do not
                 # kick to the trap statement; they simply continue on.
                 $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                 $ReferenceToInt64.Value = [int64]$StringToConvert
-    
+
                 # Restore the former error preference
                 $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                 # Retrieve the newest error on the error stack
                 $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                 if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                     # Error occurred; return failure indicator:
                     return $false
@@ -4188,7 +4188,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $true
                 }
             }
-    
+
             function Get-PSVersion {
                 # .SYNOPSIS
                 # Returns the version of PowerShell that is running.
@@ -4218,7 +4218,7 @@ function Invoke-CrossPlatformOSInventory {
                 #
                 # .NOTES
                 # Version: 1.0.20250106.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -4242,14 +4242,14 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 if (Test-Path variable:\PSVersionTable) {
                     return ($PSVersionTable.PSVersion)
                 } else {
                     return ([version]('1.0'))
                 }
             }
-    
+
             function Convert-StringToBigIntegerSafely {
                 # .SYNOPSIS
                 # Attempts to convert a string to a System.Numerics.BigInteger object.
@@ -4309,7 +4309,7 @@ function Invoke-CrossPlatformOSInventory {
                 # to a System.Numerics.BigInteger object.
                 #
                 # Version: 1.0.20250216.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -4333,12 +4333,12 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 param (
                     [ref]$ReferenceToBigIntegerObject = ([ref]$null),
                     [string]$StringToConvert = ''
                 )
-    
+
                 #region FunctionsToSupportErrorHandling ############################
                 function Get-ReferenceToLastError {
                     # .SYNOPSIS
@@ -4414,7 +4414,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 2.0.20250215.1
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -4439,14 +4439,14 @@ function Invoke-CrossPlatformOSInventory {
                     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                     # OTHER DEALINGS IN THE SOFTWARE.
                     #endregion License ################################################
-    
+
                     if ($Error.Count -gt 0) {
                         return ([ref]($Error[0]))
                     } else {
                         return ([ref]$null)
                     }
                 }
-    
+
                 function Test-ErrorOccurred {
                     # .SYNOPSIS
                     # Checks to see if an error occurred during a time period, i.e.,
@@ -4557,7 +4557,7 @@ function Invoke-CrossPlatformOSInventory {
                     # ReferenceToLaterError must be a reference to $null ([ref]$null).
                     #
                     # Version: 2.0.20250215.0
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -4586,9 +4586,9 @@ function Invoke-CrossPlatformOSInventory {
                         [ref]$ReferenceToEarlierError = ([ref]$null),
                         [ref]$ReferenceToLaterError = ([ref]$null)
                     )
-    
+
                     # TODO: Validate input
-    
+
                     $boolErrorOccurred = $false
                     if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                         # Both not $null
@@ -4610,38 +4610,38 @@ function Invoke-CrossPlatformOSInventory {
                             $boolErrorOccurred = $true
                         }
                     }
-    
+
                     return $boolErrorOccurred
                 }
                 #endregion FunctionsToSupportErrorHandling ############################
-    
+
                 trap {
                     # Intentionally left empty to prevent terminating errors from
                     # halting processing
                 }
-    
+
                 # Retrieve the newest error on the stack prior to doing work
                 $refLastKnownError = Get-ReferenceToLastError
-    
+
                 # Store current error preference; we will restore it after we do the
                 # work of this function
                 $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                 # Set ErrorActionPreference to SilentlyContinue; this will suppress
                 # error output. Terminating errors will not output anything, kick to
                 # the empty trap statement and then continue on. Likewise, non-
                 # terminating errors will also not output anything, but they do not
                 # kick to the trap statement; they simply continue on.
                 $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                 $ReferenceToBigIntegerObject.Value = [System.Numerics.BigInteger]$StringToConvert
-    
+
                 # Restore the former error preference
                 $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                 # Retrieve the newest error on the error stack
                 $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                 if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                     # Error occurred; return failure indicator:
                     return $false
@@ -4650,7 +4650,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $true
                 }
             }
-    
+
             function Convert-StringToDoubleSafely {
                 # .SYNOPSIS
                 # Attempts to convert a string to a System.Double.
@@ -4709,7 +4709,7 @@ function Invoke-CrossPlatformOSInventory {
                 # to a System.Double object.
                 #
                 # Version: 1.0.20250216.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -4733,12 +4733,12 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 param (
                     [ref]$ReferenceToDouble = ([ref]$null),
                     [string]$StringToConvert = ''
                 )
-    
+
                 #region FunctionsToSupportErrorHandling ############################
                 function Get-ReferenceToLastError {
                     # .SYNOPSIS
@@ -4814,7 +4814,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 2.0.20250215.1
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -4839,14 +4839,14 @@ function Invoke-CrossPlatformOSInventory {
                     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                     # OTHER DEALINGS IN THE SOFTWARE.
                     #endregion License ################################################
-    
+
                     if ($Error.Count -gt 0) {
                         return ([ref]($Error[0]))
                     } else {
                         return ([ref]$null)
                     }
                 }
-    
+
                 function Test-ErrorOccurred {
                     # .SYNOPSIS
                     # Checks to see if an error occurred during a time period, i.e.,
@@ -4957,7 +4957,7 @@ function Invoke-CrossPlatformOSInventory {
                     # ReferenceToLaterError must be a reference to $null ([ref]$null).
                     #
                     # Version: 2.0.20250215.0
-    
+
                     #region License ################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -4986,9 +4986,9 @@ function Invoke-CrossPlatformOSInventory {
                         [ref]$ReferenceToEarlierError = ([ref]$null),
                         [ref]$ReferenceToLaterError = ([ref]$null)
                     )
-    
+
                     # TODO: Validate input
-    
+
                     $boolErrorOccurred = $false
                     if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                         # Both not $null
@@ -5010,38 +5010,38 @@ function Invoke-CrossPlatformOSInventory {
                             $boolErrorOccurred = $true
                         }
                     }
-    
+
                     return $boolErrorOccurred
                 }
                 #endregion FunctionsToSupportErrorHandling ############################
-    
+
                 trap {
                     # Intentionally left empty to prevent terminating errors from
                     # halting processing
                 }
-    
+
                 # Retrieve the newest error on the stack prior to doing work
                 $refLastKnownError = Get-ReferenceToLastError
-    
+
                 # Store current error preference; we will restore it after we do the
                 # work of this function
                 $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                 # Set ErrorActionPreference to SilentlyContinue; this will suppress
                 # error output. Terminating errors will not output anything, kick to
                 # the empty trap statement and then continue on. Likewise, non-
                 # terminating errors will also not output anything, but they do not
                 # kick to the trap statement; they simply continue on.
                 $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                 $ReferenceToDouble.Value = [double]$StringToConvert
-    
+
                 # Restore the former error preference
                 $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                 # Retrieve the newest error on the error stack
                 $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                 if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                     # Error occurred; return failure indicator:
                     return $false
@@ -5050,39 +5050,39 @@ function Invoke-CrossPlatformOSInventory {
                     return $true
                 }
             }
-    
+
             $ReferenceArrayOfLeftoverStrings.Value = @('', '', '', '', '')
-    
+
             $boolResult = Convert-StringToVersionSafely -ReferenceToVersionObject $ReferenceToVersionObject -StringToConvert $StringToConvert
-    
+
             if ($boolResult) {
                 return 0
             }
-    
+
             # If we are still here, the conversion was not successful.
-    
+
             $arrVersionElements = Split-StringOnLiteralString -StringToSplit $StringToConvert -Splitter '.'
             $intCountOfVersionElements = $arrVersionElements.Count
-    
+
             if ($intCountOfVersionElements -lt 2) {
                 # You can't have a version with less than two elements
                 return -1
             }
-    
+
             if ($intCountOfVersionElements -ge 5) {
                 $strExcessVersionElements = [string]::join('.', $arrVersionElements[4..($intCountOfVersionElements - 1)])
             } else {
                 $strExcessVersionElements = ''
             }
-    
+
             if ($intCountOfVersionElements -ge 3) {
                 $intElementInQuestion = 3
             } else {
                 $intElementInQuestion = $intCountOfVersionElements
             }
-    
+
             $boolConversionSuccessful = $false
-    
+
             # See if excess elements are our only problem
             if (-not [string]::IsNullOrEmpty($strExcessVersionElements)) {
                 $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..$intElementInQuestion])
@@ -5094,7 +5094,7 @@ function Invoke-CrossPlatformOSInventory {
                     ($ReferenceArrayOfLeftoverStrings.Value)[4] = $strExcessVersionElements
                 }
             }
-    
+
             while ($intElementInQuestion -gt 0 -and -not $boolConversionSuccessful) {
                 $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..($intElementInQuestion - 1)])
                 $boolResult = $false
@@ -5178,7 +5178,7 @@ function Invoke-CrossPlatformOSInventory {
                                 } else {
                                     $versionPS = $PSVersion
                                 }
-    
+
                                 if ($versionPS.Major -ge 3) {
                                     # Use bigint
                                     $bigint = $null
@@ -5265,7 +5265,7 @@ function Invoke-CrossPlatformOSInventory {
                 }
                 $intElementInQuestion--
             }
-    
+
             if (-not $boolConversionSuccessful) {
                 # Conversion was not successful
                 return -1
@@ -5273,12 +5273,12 @@ function Invoke-CrossPlatformOSInventory {
                 return $intReturnValue
             }
         }
-    
+
         trap {
             # Intentionally left empty to prevent terminating errors from halting
             # processing
         }
-    
+
         if ([string]::IsNullOrEmpty($OSNativeSystemPath)) {
             $strNativeSystemPath = ''
             $intReturnCode = Get-WindowsNativeSystemPath -ReferenceToSystemPath ([ref]$strNativeSystemPath) -OSProcessorArchitecture $OSProcessorArchitecture -ProcessProcessorArchitecture $ProcessProcessorArchitecture
@@ -5289,35 +5289,35 @@ function Invoke-CrossPlatformOSInventory {
         } else {
             $refNativeSystemPath = [ref]$OSNativeSystemPath
         }
-    
+
         $strPathToNTOSKrnl = Join-Path -Path ($refNativeSystemPath.Value) -ChildPath 'ntoskrnl.exe'
-    
+
         # Retrieve the newest error on the stack prior to doing work
         $refLastKnownError = Get-ReferenceToLastError
-    
+
         # Store current error preference; we will restore it after we do the work of
         # this function
         $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
         # Set ErrorActionPreference to SilentlyContinue; this will suppress error
         # output. Terminating errors will not output anything, kick to the empty trap
         # statement and then continue on. Likewise, non-terminating errors will also
         # not output anything, but they do not kick to the trap statement; they simply
         # continue on.
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
         # Attempt to get the product version from ntoskrnl.exe
         $ReferenceToStringVersion.Value = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($strPathToNTOSKrnl).ProductVersion
-    
+
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
         # Retrieve the newest error on the error stack
         $refNewestCurrentError = Get-ReferenceToLastError
-    
+
         if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
             # Error occurred
-    
+
             return -2
         } else {
             # No error occurred
@@ -5325,7 +5325,7 @@ function Invoke-CrossPlatformOSInventory {
                 # No version information found; this is an error
                 return -3
             }
-    
+
             # Version information found; convert to a version object
             $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject $ReferenceToSystemVersion -ReferenceArrayOfLeftoverStrings $ReferenceToArrayOfLeftoverStrings -StringToConvert $ReferenceToStringVersion.Value
             if ($intReturnCode -lt 0) {
@@ -5335,7 +5335,7 @@ function Invoke-CrossPlatformOSInventory {
             return $intReturnCode
         }
     }
-    
+
     function Get-WindowsOSVersion {
         # .SYNOPSIS
         # Gets the Windows operating system version.
@@ -5433,7 +5433,7 @@ function Invoke-CrossPlatformOSInventory {
         # https://github.com/franklesniak/sysadmin-accelerator/blob/99bb8b23bca51a118d39df0ee440e731498cf115/VBScript/02_Upfront_Encapsulated_Code_With_No_Dependencies/GetWindowsOperatingSystemVersionNumberAsString.vbs
         #
         # Version: 0.1.20250407.0
-    
+
         #region License ############################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -5455,7 +5455,7 @@ function Invoke-CrossPlatformOSInventory {
         # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ############################################################
-    
+
         #region Acknowledgements ###################################################
         # User "Shem Sargent" on Super User, who provided sample code for augmenting
         # WMI-based version numbers with their revision number:
@@ -5469,7 +5469,7 @@ function Invoke-CrossPlatformOSInventory {
         # approaches:
         # https://gist.github.com/SevenLayerJedi/c0415c03cab1ff51aa49d2f4d708f265
         #endregion Acknowledgements ###################################################
-    
+
         param (
             [ref]$ReferenceToSystemVersion = ([ref]$null),
             [ref]$ReferenceToStringVersion = ([ref]$null),
@@ -5482,7 +5482,7 @@ function Invoke-CrossPlatformOSInventory {
             [string]$OSProcessorArchitecture = '',
             [string]$ProcessProcessorArchitecture = ''
         )
-    
+
         function Get-WindowsOSVersionFromWMI {
             # .SYNOPSIS
             # Gets the Windows operating system version from WMI.
@@ -5603,7 +5603,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250406.2
-    
+
             #region License ############################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -5625,14 +5625,14 @@ function Invoke-CrossPlatformOSInventory {
             # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ############################################################
-    
+
             param (
                 [ref]$ReferenceToSystemVersion = ([ref]$null),
                 [ref]$ReferenceToStringVersion = ([ref]$null),
                 [ref]$ReferenceToArrayOfLeftoverStrings = ([ref]$null),
                 [version]$PSVersion = ([version]'0.0')
             )
-    
+
             #region FunctionsToSupportErrorHandling ####################################
             function Get-ReferenceToLastError {
                 # .SYNOPSIS
@@ -5708,7 +5708,7 @@ function Invoke-CrossPlatformOSInventory {
                 #
                 # .NOTES
                 # Version: 2.0.20250215.1
-    
+
                 #region License ################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -5733,14 +5733,14 @@ function Invoke-CrossPlatformOSInventory {
                 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                 # OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ################################################
-    
+
                 if ($Error.Count -gt 0) {
                     return ([ref]($Error[0]))
                 } else {
                     return ([ref]$null)
                 }
             }
-    
+
             function Test-ErrorOccurred {
                 # .SYNOPSIS
                 # Checks to see if an error occurred during a time period, i.e.,
@@ -5851,7 +5851,7 @@ function Invoke-CrossPlatformOSInventory {
                 # ReferenceToLaterError must be a reference to $null ([ref]$null).
                 #
                 # Version: 2.0.20250215.0
-    
+
                 #region License ################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -5880,9 +5880,9 @@ function Invoke-CrossPlatformOSInventory {
                     [ref]$ReferenceToEarlierError = ([ref]$null),
                     [ref]$ReferenceToLaterError = ([ref]$null)
                 )
-    
+
                 # TODO: Validate input
-    
+
                 $boolErrorOccurred = $false
                 if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                     # Both not $null
@@ -5904,11 +5904,11 @@ function Invoke-CrossPlatformOSInventory {
                         $boolErrorOccurred = $true
                     }
                 }
-    
+
                 return $boolErrorOccurred
             }
             #endregion FunctionsToSupportErrorHandling ####################################
-    
+
             function Get-PSVersion {
                 # .SYNOPSIS
                 # Returns the version of PowerShell that is running.
@@ -5938,7 +5938,7 @@ function Invoke-CrossPlatformOSInventory {
                 #
                 # .NOTES
                 # Version: 1.0.20250106.0
-    
+
                 #region License ####################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -5962,14 +5962,14 @@ function Invoke-CrossPlatformOSInventory {
                 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 # SOFTWARE.
                 #endregion License ####################################################
-    
+
                 if (Test-Path variable:\PSVersionTable) {
                     return ($PSVersionTable.PSVersion)
                 } else {
                     return ([version]('1.0'))
                 }
             }
-    
+
             function Convert-StringToFlexibleVersion {
                 # .SYNOPSIS
                 # Converts a string to a version object. However, when the string contains
@@ -6269,7 +6269,7 @@ function Invoke-CrossPlatformOSInventory {
                 # allowing it to skip the determination of the PowerShell engine version.
                 #
                 # Version: 1.0.20250218.0
-    
+
                 #region License ########################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -6292,14 +6292,14 @@ function Invoke-CrossPlatformOSInventory {
                 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
                 # USE OR OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ########################################################
-    
+
                 param (
                     [ref]$ReferenceToVersionObject = ([ref]$null),
                     [ref]$ReferenceArrayOfLeftoverStrings = ([ref]$null),
                     [string]$StringToConvert = '',
                     [version]$PSVersion = ([version]'0.0')
                 )
-    
+
                 function Convert-StringToVersionSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Version object.
@@ -6359,7 +6359,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Version object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -6383,12 +6383,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToVersionObject = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -6464,7 +6464,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -6489,14 +6489,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -6607,7 +6607,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -6636,9 +6636,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -6660,38 +6660,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToVersionObject.Value = [version]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -6700,7 +6700,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Split-StringOnLiteralString {
                     # .SYNOPSIS
                     # Splits a string into an array using a literal string as the splitter.
@@ -6772,7 +6772,7 @@ function Invoke-CrossPlatformOSInventory {
                     # converts $null to an empty string before splitting the string.
                     #
                     # Version: 3.0.20250211.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -6796,15 +6796,15 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [string]$StringToSplit = '',
                         [string]$Splitter = ''
                     )
-    
+
                     $strSplitterInRegEx = [regex]::Escape($Splitter)
                     $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
-    
+
                     # The following code forces the function to return an array, always,
                     # even when there are zero or one elements in the array
                     $intElementCount = 1
@@ -6827,7 +6827,7 @@ function Invoke-CrossPlatformOSInventory {
                         return ($result)
                     }
                 }
-    
+
                 function Convert-StringToInt32Safely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Int32.
@@ -6886,7 +6886,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Int32 object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -6910,12 +6910,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToInt32 = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -6991,7 +6991,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -7016,14 +7016,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -7134,7 +7134,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -7163,9 +7163,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -7187,38 +7187,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToInt32.Value = [int32]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -7227,7 +7227,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Convert-StringToInt64Safely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Int64.
@@ -7286,7 +7286,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Int64 object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -7310,12 +7310,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToInt64 = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -7391,7 +7391,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -7416,14 +7416,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -7534,7 +7534,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -7563,9 +7563,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -7587,38 +7587,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToInt64.Value = [int64]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -7627,7 +7627,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Get-PSVersion {
                     # .SYNOPSIS
                     # Returns the version of PowerShell that is running.
@@ -7657,7 +7657,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 1.0.20250106.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -7681,14 +7681,14 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     if (Test-Path variable:\PSVersionTable) {
                         return ($PSVersionTable.PSVersion)
                     } else {
                         return ([version]('1.0'))
                     }
                 }
-    
+
                 function Convert-StringToBigIntegerSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Numerics.BigInteger object.
@@ -7748,7 +7748,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Numerics.BigInteger object.
                     #
                     # Version: 1.0.20250216.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -7772,12 +7772,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToBigIntegerObject = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -7853,7 +7853,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -7878,14 +7878,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -7996,7 +7996,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -8025,9 +8025,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -8049,38 +8049,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToBigIntegerObject.Value = [System.Numerics.BigInteger]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -8089,7 +8089,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Convert-StringToDoubleSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Double.
@@ -8148,7 +8148,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Double object.
                     #
                     # Version: 1.0.20250216.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -8172,12 +8172,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToDouble = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -8253,7 +8253,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -8278,14 +8278,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -8396,7 +8396,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -8425,9 +8425,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -8449,38 +8449,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToDouble.Value = [double]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -8489,39 +8489,39 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 $ReferenceArrayOfLeftoverStrings.Value = @('', '', '', '', '')
-    
+
                 $boolResult = Convert-StringToVersionSafely -ReferenceToVersionObject $ReferenceToVersionObject -StringToConvert $StringToConvert
-    
+
                 if ($boolResult) {
                     return 0
                 }
-    
+
                 # If we are still here, the conversion was not successful.
-    
+
                 $arrVersionElements = Split-StringOnLiteralString -StringToSplit $StringToConvert -Splitter '.'
                 $intCountOfVersionElements = $arrVersionElements.Count
-    
+
                 if ($intCountOfVersionElements -lt 2) {
                     # You can't have a version with less than two elements
                     return -1
                 }
-    
+
                 if ($intCountOfVersionElements -ge 5) {
                     $strExcessVersionElements = [string]::join('.', $arrVersionElements[4..($intCountOfVersionElements - 1)])
                 } else {
                     $strExcessVersionElements = ''
                 }
-    
+
                 if ($intCountOfVersionElements -ge 3) {
                     $intElementInQuestion = 3
                 } else {
                     $intElementInQuestion = $intCountOfVersionElements
                 }
-    
+
                 $boolConversionSuccessful = $false
-    
+
                 # See if excess elements are our only problem
                 if (-not [string]::IsNullOrEmpty($strExcessVersionElements)) {
                     $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..$intElementInQuestion])
@@ -8533,7 +8533,7 @@ function Invoke-CrossPlatformOSInventory {
                         ($ReferenceArrayOfLeftoverStrings.Value)[4] = $strExcessVersionElements
                     }
                 }
-    
+
                 while ($intElementInQuestion -gt 0 -and -not $boolConversionSuccessful) {
                     $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..($intElementInQuestion - 1)])
                     $boolResult = $false
@@ -8617,7 +8617,7 @@ function Invoke-CrossPlatformOSInventory {
                                     } else {
                                         $versionPS = $PSVersion
                                     }
-    
+
                                     if ($versionPS.Major -ge 3) {
                                         # Use bigint
                                         $bigint = $null
@@ -8704,7 +8704,7 @@ function Invoke-CrossPlatformOSInventory {
                     }
                     $intElementInQuestion--
                 }
-    
+
                 if (-not $boolConversionSuccessful) {
                     # Conversion was not successful
                     return -1
@@ -8712,33 +8712,33 @@ function Invoke-CrossPlatformOSInventory {
                     return $intReturnValue
                 }
             }
-    
+
             trap {
                 # Intentionally left empty to prevent terminating errors from halting
                 # processing
             }
-    
+
             if ($PSVersion -ne ([version]'0.0')) {
                 $refPSVersion = [ref]$PSVersion
             } else {
                 $versionPS = Get-PSVersion
                 $refPSVersion = [ref]$versionPS
             }
-    
+
             # Retrieve the newest error on the stack prior to doing work
             $refLastKnownError = Get-ReferenceToLastError
-    
+
             # Store current error preference; we will restore it after we do the work of
             # this function
             $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
             # Set ErrorActionPreference to SilentlyContinue; this will suppress error
             # output. Terminating errors will not output anything, kick to the empty trap
             # statement and then continue on. Likewise, non-terminating errors will also
             # not output anything, but they do not kick to the trap statement; they simply
             # continue on.
             $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
             # The below line is a "one liner" version of the following code; it must be one
             # line in order for error handling to work correctly!
             ###############################################################################
@@ -8764,28 +8764,28 @@ function Invoke-CrossPlatformOSInventory {
             # }
             ###############################################################################
             $intFunctionReturn = 0; if (($refPSVersion.Value).Major -ge 3) { $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Version from Win32_OperatingSystem"); if ($arrCIMInstanceOS.Count -eq 0) { return -1 }; $ReferenceToStringVersion.Value = ($arrCIMInstanceOS[0]).Version; if ($arrCIMInstanceOS.Count -gt 1) { $intFunctionReturn += 1 } } else { $arrManagementObjectOS = @(Get-WmiObject -Query "Select Version from Win32_OperatingSystem"); if ($arrManagementObjectOS.Count -eq 0) { return -2 }; $ReferenceToStringVersion.Value = ($arrManagementObjectOS[0]).Version; if ($arrManagementObjectOS.Count -gt 1) { $intFunctionReturn += 2 } }
-    
+
             # Restore the former error preference
             $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
             # Retrieve the newest error on the error stack
             $refNewestCurrentError = Get-ReferenceToLastError
-    
+
             if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                 # Error occurred
-    
+
                 # Return failure indicator:
                 return -3
             } else {
                 # No error occurred
-    
+
                 # Operating system version string is stored in
                 # $ReferenceToStringVersion.Value
                 if ([string]::IsNullOrEmpty($ReferenceToStringVersion.Value)) {
                     # No version information found; this is an error
                     return -4
                 }
-    
+
                 # Version information found; convert to a version object
                 $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject $ReferenceToSystemVersion -ReferenceArrayOfLeftoverStrings $ReferenceToArrayOfLeftoverStrings -StringToConvert $ReferenceToStringVersion.Value
                 if ($intReturnCode -lt 0) {
@@ -8795,7 +8795,7 @@ function Invoke-CrossPlatformOSInventory {
                 return (($intReturnCode * 4) + $intFunctionReturn)
             }
         }
-    
+
         function Get-WindowsOSVersionFromVerCommand {
             # .SYNOPSIS
             # Gets the version of the Windows operating system from the ver command.
@@ -8915,7 +8915,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250406.1
-    
+
             #region License ############################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -8937,14 +8937,14 @@ function Invoke-CrossPlatformOSInventory {
             # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ############################################################
-    
+
             param (
                 [ref]$ReferenceToSystemVersion = ([ref]$null),
                 [ref]$ReferenceToStringVersion = ([ref]$null),
                 [ref]$ReferenceToArrayOfLeftoverStrings = ([ref]$null),
                 [string]$PathToCommandPrompt = ''
             )
-    
+
             function Get-CommandPromptPath {
                 # .SYNOPSIS
                 # Gets the path to the command prompt executable (cmd.exe).
@@ -8983,7 +8983,7 @@ function Invoke-CrossPlatformOSInventory {
                 # path to the command prompt executable (cmd.exe)
                 #
                 # Version: 1.0.20250406.1
-    
+
                 #region License ########################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -9006,11 +9006,11 @@ function Invoke-CrossPlatformOSInventory {
                 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
                 # USE OR OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ########################################################
-    
+
                 param (
                     [ref]$ReferenceToCommandPromptPath = ([ref]$null)
                 )
-    
+
                 if (-not [string]::IsNullOrEmpty($env:ComSpec)) {
                     $strCommandPromptPath = $env:ComSpec
                 } elseif (-not [string]::IsNullOrEmpty([System.Environment]::SystemDirectory)) {
@@ -9019,7 +9019,7 @@ function Invoke-CrossPlatformOSInventory {
                 } else {
                     return $false
                 }
-    
+
                 if (Test-Path -Path $strCommandPromptPath) {
                     $ReferenceToCommandPromptPath.Value = $strCommandPromptPath
                     return $true
@@ -9027,7 +9027,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $false
                 }
             }
-    
+
             function Convert-StringToFlexibleVersion {
                 # .SYNOPSIS
                 # Converts a string to a version object. However, when the string contains
@@ -9327,7 +9327,7 @@ function Invoke-CrossPlatformOSInventory {
                 # allowing it to skip the determination of the PowerShell engine version.
                 #
                 # Version: 1.0.20250218.0
-    
+
                 #region License ########################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -9350,14 +9350,14 @@ function Invoke-CrossPlatformOSInventory {
                 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
                 # USE OR OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ########################################################
-    
+
                 param (
                     [ref]$ReferenceToVersionObject = ([ref]$null),
                     [ref]$ReferenceArrayOfLeftoverStrings = ([ref]$null),
                     [string]$StringToConvert = '',
                     [version]$PSVersion = ([version]'0.0')
                 )
-    
+
                 function Convert-StringToVersionSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Version object.
@@ -9417,7 +9417,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Version object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -9441,12 +9441,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToVersionObject = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -9522,7 +9522,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -9547,14 +9547,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -9665,7 +9665,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -9694,9 +9694,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -9718,38 +9718,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToVersionObject.Value = [version]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -9758,7 +9758,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Split-StringOnLiteralString {
                     # .SYNOPSIS
                     # Splits a string into an array using a literal string as the splitter.
@@ -9830,7 +9830,7 @@ function Invoke-CrossPlatformOSInventory {
                     # converts $null to an empty string before splitting the string.
                     #
                     # Version: 3.0.20250211.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -9854,15 +9854,15 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [string]$StringToSplit = '',
                         [string]$Splitter = ''
                     )
-    
+
                     $strSplitterInRegEx = [regex]::Escape($Splitter)
                     $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
-    
+
                     # The following code forces the function to return an array, always,
                     # even when there are zero or one elements in the array
                     $intElementCount = 1
@@ -9885,7 +9885,7 @@ function Invoke-CrossPlatformOSInventory {
                         return ($result)
                     }
                 }
-    
+
                 function Convert-StringToInt32Safely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Int32.
@@ -9944,7 +9944,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Int32 object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -9968,12 +9968,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToInt32 = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -10049,7 +10049,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -10074,14 +10074,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -10192,7 +10192,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -10221,9 +10221,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -10245,38 +10245,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToInt32.Value = [int32]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -10285,7 +10285,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Convert-StringToInt64Safely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Int64.
@@ -10344,7 +10344,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Int64 object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -10368,12 +10368,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToInt64 = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -10449,7 +10449,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -10474,14 +10474,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -10592,7 +10592,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -10621,9 +10621,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -10645,38 +10645,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToInt64.Value = [int64]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -10685,7 +10685,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Get-PSVersion {
                     # .SYNOPSIS
                     # Returns the version of PowerShell that is running.
@@ -10715,7 +10715,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 1.0.20250106.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -10739,14 +10739,14 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     if (Test-Path variable:\PSVersionTable) {
                         return ($PSVersionTable.PSVersion)
                     } else {
                         return ([version]('1.0'))
                     }
                 }
-    
+
                 function Convert-StringToBigIntegerSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Numerics.BigInteger object.
@@ -10806,7 +10806,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Numerics.BigInteger object.
                     #
                     # Version: 1.0.20250216.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -10830,12 +10830,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToBigIntegerObject = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -10911,7 +10911,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -10936,14 +10936,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -11054,7 +11054,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -11083,9 +11083,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -11107,38 +11107,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToBigIntegerObject.Value = [System.Numerics.BigInteger]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -11147,7 +11147,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Convert-StringToDoubleSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Double.
@@ -11206,7 +11206,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Double object.
                     #
                     # Version: 1.0.20250216.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -11230,12 +11230,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToDouble = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -11311,7 +11311,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -11336,14 +11336,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -11454,7 +11454,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -11483,9 +11483,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -11507,38 +11507,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToDouble.Value = [double]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -11547,39 +11547,39 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 $ReferenceArrayOfLeftoverStrings.Value = @('', '', '', '', '')
-    
+
                 $boolResult = Convert-StringToVersionSafely -ReferenceToVersionObject $ReferenceToVersionObject -StringToConvert $StringToConvert
-    
+
                 if ($boolResult) {
                     return 0
                 }
-    
+
                 # If we are still here, the conversion was not successful.
-    
+
                 $arrVersionElements = Split-StringOnLiteralString -StringToSplit $StringToConvert -Splitter '.'
                 $intCountOfVersionElements = $arrVersionElements.Count
-    
+
                 if ($intCountOfVersionElements -lt 2) {
                     # You can't have a version with less than two elements
                     return -1
                 }
-    
+
                 if ($intCountOfVersionElements -ge 5) {
                     $strExcessVersionElements = [string]::join('.', $arrVersionElements[4..($intCountOfVersionElements - 1)])
                 } else {
                     $strExcessVersionElements = ''
                 }
-    
+
                 if ($intCountOfVersionElements -ge 3) {
                     $intElementInQuestion = 3
                 } else {
                     $intElementInQuestion = $intCountOfVersionElements
                 }
-    
+
                 $boolConversionSuccessful = $false
-    
+
                 # See if excess elements are our only problem
                 if (-not [string]::IsNullOrEmpty($strExcessVersionElements)) {
                     $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..$intElementInQuestion])
@@ -11591,7 +11591,7 @@ function Invoke-CrossPlatformOSInventory {
                         ($ReferenceArrayOfLeftoverStrings.Value)[4] = $strExcessVersionElements
                     }
                 }
-    
+
                 while ($intElementInQuestion -gt 0 -and -not $boolConversionSuccessful) {
                     $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..($intElementInQuestion - 1)])
                     $boolResult = $false
@@ -11675,7 +11675,7 @@ function Invoke-CrossPlatformOSInventory {
                                     } else {
                                         $versionPS = $PSVersion
                                     }
-    
+
                                     if ($versionPS.Major -ge 3) {
                                         # Use bigint
                                         $bigint = $null
@@ -11762,7 +11762,7 @@ function Invoke-CrossPlatformOSInventory {
                     }
                     $intElementInQuestion--
                 }
-    
+
                 if (-not $boolConversionSuccessful) {
                     # Conversion was not successful
                     return -1
@@ -11770,7 +11770,7 @@ function Invoke-CrossPlatformOSInventory {
                     return $intReturnValue
                 }
             }
-    
+
             if ([string]::IsNullOrEmpty($PathToCommandPrompt)) {
                 # No path to command prompt specified
                 $strCommandPromptPath = ''
@@ -11784,39 +11784,39 @@ function Invoke-CrossPlatformOSInventory {
                 # Path to command prompt specified
                 $refCommandPromptPath = [ref]$PathToCommandPrompt
             }
-    
+
             if (-not (Test-Path -Path $refCommandPromptPath.Value)) {
                 # Path to command prompt does not exist
                 return -2
             }
-    
+
             $strCommand = $refCommandPromptPath.Value + ' /c ver 2>&1'
             # Capture cmd /c ver output:
             $result = & ([ScriptBlock]::Create($strCommand))
-    
+
             # Check for command execution success:
             if ($LASTEXITCODE -ne 0) {
                 exit -3
             }
-    
+
             # Ensure $result is a single string:
             if ($result -is [array]) {
                 $result = [String]::Join(' ', $result)
             }
-    
+
             if ([string]::IsNullOrEmpty($result)) {
                 # No output from cmd /c ver command
                 return -4
             }
-    
+
             # Parse the version number
             $strVersion = [regex]::Match($result, '\d+\.\d+\.\d+(\.\d+)?').Value
-    
+
             if ([string]::IsNullOrEmpty($strVersion)) {
                 # No version number found in cmd /c ver output
                 return -5
             }
-    
+
             # Validate the result further
             if ($strVersion -and $strVersion -match '^\d+\.\d+\.\d+(\.\d+)?$') {
                 $ReferenceToStringVersion.Value = $strVersion
@@ -11824,7 +11824,7 @@ function Invoke-CrossPlatformOSInventory {
                 # Invalid version number format
                 return -6
             }
-    
+
             $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject $ReferenceToSystemVersion -ReferenceArrayOfLeftoverStrings $ReferenceToArrayOfLeftoverStrings -StringToConvert $ReferenceToStringVersion.Value
             if ($intReturnCode -lt 0) {
                 # Conversion failed; return failure indicator
@@ -11832,7 +11832,7 @@ function Invoke-CrossPlatformOSInventory {
             }
             return $intReturnCode
         }
-    
+
         function Get-WindowsKernelVersion {
             # .SYNOPSIS
             # Gets the version of the Windows kernel.
@@ -11974,7 +11974,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250406.0
-    
+
             #region License ############################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -11996,7 +11996,7 @@ function Invoke-CrossPlatformOSInventory {
             # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ############################################################
-    
+
             param (
                 [ref]$ReferenceToSystemVersion = ([ref]$null),
                 [ref]$ReferenceToStringVersion = ([ref]$null),
@@ -12005,7 +12005,7 @@ function Invoke-CrossPlatformOSInventory {
                 [string]$OSProcessorArchitecture = '',
                 [string]$ProcessProcessorArchitecture = ''
             )
-    
+
             #region FunctionsToSupportErrorHandling ####################################
             function Get-ReferenceToLastError {
                 # .SYNOPSIS
@@ -12081,7 +12081,7 @@ function Invoke-CrossPlatformOSInventory {
                 #
                 # .NOTES
                 # Version: 2.0.20250215.1
-    
+
                 #region License ################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -12106,14 +12106,14 @@ function Invoke-CrossPlatformOSInventory {
                 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                 # OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ################################################
-    
+
                 if ($Error.Count -gt 0) {
                     return ([ref]($Error[0]))
                 } else {
                     return ([ref]$null)
                 }
             }
-    
+
             function Test-ErrorOccurred {
                 # .SYNOPSIS
                 # Checks to see if an error occurred during a time period, i.e.,
@@ -12224,7 +12224,7 @@ function Invoke-CrossPlatformOSInventory {
                 # ReferenceToLaterError must be a reference to $null ([ref]$null).
                 #
                 # Version: 2.0.20250215.0
-    
+
                 #region License ################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -12253,9 +12253,9 @@ function Invoke-CrossPlatformOSInventory {
                     [ref]$ReferenceToEarlierError = ([ref]$null),
                     [ref]$ReferenceToLaterError = ([ref]$null)
                 )
-    
+
                 # TODO: Validate input
-    
+
                 $boolErrorOccurred = $false
                 if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                     # Both not $null
@@ -12277,11 +12277,11 @@ function Invoke-CrossPlatformOSInventory {
                         $boolErrorOccurred = $true
                     }
                 }
-    
+
                 return $boolErrorOccurred
             }
             #endregion FunctionsToSupportErrorHandling ####################################
-    
+
             function Get-WindowsNativeSystemPath {
                 # .SYNOPSIS
                 # On Windows, gets the OS-native, non-redirected system path (e.g.,
@@ -12367,7 +12367,7 @@ function Invoke-CrossPlatformOSInventory {
                 # architecture.
                 #
                 # Version: 1.0.20250406.1
-    
+
                 #region License ########################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -12390,13 +12390,13 @@ function Invoke-CrossPlatformOSInventory {
                 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
                 # USE OR OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ########################################################
-    
+
                 param (
                     [ref]$ReferenceToSystemPath = ([ref]$null),
                     [string]$OSProcessorArchitecture = '',
                     [string]$ProcessProcessorArchitecture = ''
                 )
-    
+
                 function Get-WindowsOSProcessorArchitecture {
                     # .SYNOPSIS
                     # Determines the processor architecture (instruction set) of the
@@ -12448,7 +12448,7 @@ function Invoke-CrossPlatformOSInventory {
                     # processor architecture (instruction set) of the operating system.
                     #
                     # Version: 1.0.20250406.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -12472,7 +12472,7 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     #region Acknowledgements ###########################################
                     # Microsoft, for providing a current reference on the SYSTEM_INFO
                     # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -12496,11 +12496,11 @@ function Invoke-CrossPlatformOSInventory {
                     # SYSTEM_INFO struct and additional architectures:
                     # http://masm32.com/board/index.php?topic=3401.0
                     #endregion Acknowledgements ###########################################
-    
+
                     param (
                         [ref]$ReferenceToOSProcessorArchitecture = ([ref]$null)
                     )
-    
+
                     function Test-RegistryValue {
                         # .SYNOPSIS
                         # Tests to determine whether a registry value exists in the Windows
@@ -12572,7 +12572,7 @@ function Invoke-CrossPlatformOSInventory {
                         # but it is.
                         #
                         # Version: 1.0.20250406.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -12597,19 +12597,19 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         param (
                             [ref]$RefPathToRegistryKey = ([ref]$null),
                             [string]$PathToRegistryKey = '',
                             [ref]$RefNameOfRegistryValue = ([ref]$null),
                             [string]$NameOfRegistryValue = ''
                         )
-    
+
                         if ([string]::IsNullOrEmpty($RefPathToRegistryKey.Value) -and [string]::IsNullOrEmpty($PathToRegistryKey)) {
                             Write-Error -Message 'Either RefPathToRegistryKey or PathToRegistryKey must be specified.'
                             return $false
                         }
-    
+
                         # Specifying an empty string for the name of the registry value is
                         # valid; it would mean the "default" value of the registry key.
                         # However, if both RefNameOfRegistryValue and NameOfRegistryValue
@@ -12618,7 +12618,7 @@ function Invoke-CrossPlatformOSInventory {
                             Write-Error -Message 'Either RefNameOfRegistryValue or NameOfRegistryValue must be specified.'
                             return $false
                         }
-    
+
                         if (-not [string]::IsNullOrEmpty($RefPathToRegistryKey.Value)) {
                             $refActualPathToRegistryKey = $RefPathToRegistryKey
                         } else {
@@ -12629,7 +12629,7 @@ function Invoke-CrossPlatformOSInventory {
                         } else {
                             $refActualNameOfRegistryValue = [ref]$NameOfRegistryValue
                         }
-    
+
                         if (Test-Path -LiteralPath $refActualPathToRegistryKey.Value) {
                             $registryKey = Get-Item -LiteralPath $refActualPathToRegistryKey.Value
                             if ($null -ne $registryKey.GetValue($refActualNameOfRegistryValue.Value, $null)) {
@@ -12641,7 +12641,7 @@ function Invoke-CrossPlatformOSInventory {
                             return $false
                         }
                     }
-    
+
                     $strRegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
                     $strValueName = 'PROCESSOR_ARCHITECTURE'
                     if (Test-RegistryValue -PathToRegistryKey $strRegistryPath -NameOfRegistryValue $strValueName) {
@@ -12654,7 +12654,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $false
                     }
                 }
-    
+
                 function Get-WindowsProcessProcessorArchitecture {
                     # .SYNOPSIS
                     # Gets the processor architecture of the current process, assuming the
@@ -12709,7 +12709,7 @@ function Invoke-CrossPlatformOSInventory {
                     # process.
                     #
                     # Version: 1.0.20250406.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -12733,7 +12733,7 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     #region Acknowledgements ###########################################
                     # Microsoft, for providing a current reference on the SYSTEM_INFO
                     # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -12757,11 +12757,11 @@ function Invoke-CrossPlatformOSInventory {
                     # SYSTEM_INFO struct and additional architectures:
                     # http://masm32.com/board/index.php?topic=3401.0
                     #endregion Acknowledgements ###########################################
-    
+
                     param (
                         [ref]$ReferenceToProcessProcessorArchitecture = ([ref]$null)
                     )
-    
+
                     if ($null -ne $env:PROCESSOR_ARCHITECTURE) {
                         $ReferenceToProcessProcessorArchitecture.Value = $env:PROCESSOR_ARCHITECTURE
                         return $true
@@ -12769,7 +12769,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $false
                     }
                 }
-    
+
                 function Test-ProcessorArchitectureIs32Bit {
                     # .SYNOPSIS
                     # Tests a string that contains the processor architecture to determine
@@ -12849,7 +12849,7 @@ function Invoke-CrossPlatformOSInventory {
                     # "AMD64").
                     #
                     # Version: 1.0.20250406.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -12873,7 +12873,7 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     #region Acknowledgements ###########################################
                     # Microsoft, for providing a current reference on the SYSTEM_INFO
                     # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -12897,16 +12897,16 @@ function Invoke-CrossPlatformOSInventory {
                     # SYSTEM_INFO struct and additional architectures:
                     # http://masm32.com/board/index.php?topic=3401.0
                     #endregion Acknowledgements ###########################################
-    
+
                     param (
                         [ref]$ReferenceToProcessorArchitectureIs32Bit = ([ref]$null),
                         [string]$ProcessorArchitecture = ''
                     )
-    
+
                     if ([string]::IsNullOrEmpty($ProcessorArchitecture)) {
                         return -1
                     }
-    
+
                     switch ($ProcessorArchitecture.ToUpper()) {
                         'X86' {
                             $ReferenceToProcessorArchitectureIs32Bit.Value = $true
@@ -12933,7 +12933,7 @@ function Invoke-CrossPlatformOSInventory {
                         }
                     }
                 }
-    
+
                 function Test-ProcessorArchitectureIs64Bit {
                     # .SYNOPSIS
                     # Tests a string that contains the processor architecture to determine
@@ -13013,7 +13013,7 @@ function Invoke-CrossPlatformOSInventory {
                     # "AMD64").
                     #
                     # Version: 1.0.20250406.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -13037,7 +13037,7 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     #region Acknowledgements ###########################################
                     # Microsoft, for providing a current reference on the SYSTEM_INFO
                     # struct, used by the GetSystemInfo Win32 function. This reference does
@@ -13061,16 +13061,16 @@ function Invoke-CrossPlatformOSInventory {
                     # SYSTEM_INFO struct and additional architectures:
                     # http://masm32.com/board/index.php?topic=3401.0
                     #endregion Acknowledgements ###########################################
-    
+
                     param (
                         [ref]$ReferenceToProcessorArchitectureIs64Bit = ([ref]$null),
                         [string]$ProcessorArchitecture = ''
                     )
-    
+
                     if ([string]::IsNullOrEmpty($ProcessorArchitecture)) {
                         return -1
                     }
-    
+
                     switch ($ProcessorArchitecture.ToUpper()) {
                         'X86' {
                             $ReferenceToProcessorArchitectureIs64Bit.Value = $false
@@ -13097,7 +13097,7 @@ function Invoke-CrossPlatformOSInventory {
                         }
                     }
                 }
-    
+
                 if ([string]::IsNullOrEmpty($OSProcessorArchitecture)) {
                     $strOSProcessorArchitecture = ''
                     $boolSuccess = Get-WindowsOSProcessorArchitecture -ReferenceToOSProcessorArchitecture ([ref]$strOSProcessorArchitecture)
@@ -13108,7 +13108,7 @@ function Invoke-CrossPlatformOSInventory {
                 } else {
                     $refOSProcessorArchitecture = [ref]$OSProcessorArchitecture
                 }
-    
+
                 if ([string]::IsNullOrEmpty($ProcessProcessorArchitecture)) {
                     $strProcessProcessorArchitecture = ''
                     $boolSuccess = Get-WindowsProcessProcessorArchitecture -ReferenceToProcessProcessorArchitecture ([ref]$strProcessProcessorArchitecture)
@@ -13119,14 +13119,14 @@ function Invoke-CrossPlatformOSInventory {
                 } else {
                     $refProcessProcessorArchitecture = [ref]$ProcessProcessorArchitecture
                 }
-    
+
                 #region Determine OS bit width #########################################
                 $bool64BitOSProcessorArchitecture = $false
                 $intReturnCode = Test-ProcessorArchitectureIs64Bit -ReferenceToProcessorArchitectureIs64Bit ([ref]$bool64BitOSProcessorArchitecture) -ProcessorArchitecture ($refOSProcessorArchitecture.Value)
                 if ($intReturnCode -ne 0) {
                     return -3
                 }
-    
+
                 $bool32BitOSProcessorArchitecture = $false
                 if (-not $bool64BitOSProcessorArchitecture) {
                     $intReturnCode = Test-ProcessorArchitectureIs32Bit -ReferenceToProcessorArchitectureIs32Bit ([ref]$bool32BitOSProcessorArchitecture) -ProcessorArchitecture ($refOSProcessorArchitecture.Value)
@@ -13134,20 +13134,20 @@ function Invoke-CrossPlatformOSInventory {
                         return -4
                     }
                 }
-    
+
                 if ((-not $bool64BitOSProcessorArchitecture) -and (-not $bool32BitOSProcessorArchitecture)) {
                     # OS is both not 32-bit and not 64-bit--wut?
                     return -5
                 }
                 #endregion Determine OS bit width #########################################
-    
+
                 #region Determine process bit width ####################################
                 $bool64BitProcessProcessorArchitecture = $false
                 $intReturnCode = Test-ProcessorArchitectureIs64Bit -ReferenceToProcessorArchitectureIs64Bit ([ref]$bool64BitProcessProcessorArchitecture) -ProcessorArchitecture ($refProcessProcessorArchitecture.Value)
                 if ($intReturnCode -ne 0) {
                     return -6
                 }
-    
+
                 $bool32BitProcessProcessorArchitecture = $false
                 if (-not $bool64BitProcessProcessorArchitecture) {
                     $intReturnCode = Test-ProcessorArchitectureIs32Bit -ReferenceToProcessorArchitectureIs32Bit ([ref]$bool32BitProcessProcessorArchitecture) -ProcessorArchitecture ($refProcessProcessorArchitecture.Value)
@@ -13155,13 +13155,13 @@ function Invoke-CrossPlatformOSInventory {
                         return -7
                     }
                 }
-    
+
                 if ((-not $bool64BitProcessProcessorArchitecture) -and (-not $bool32BitProcessProcessorArchitecture)) {
                     # Process is both not 32-bit and not 64-bit--wut?
                     return -8
                 }
                 #endregion Determine process bit width ####################################
-    
+
                 if ($bool64BitOSProcessorArchitecture -and $bool32BitProcessProcessorArchitecture) {
                     # 32-bit process on 64-bit OS
                     # Need to get and return sysnative folder
@@ -13174,7 +13174,7 @@ function Invoke-CrossPlatformOSInventory {
                     } else {
                         return -9
                     }
-    
+
                     $strSysnativePath = Join-Path -Path $strWindowsPath -ChildPath 'Sysnative'
                     if (-not (Test-Path -LiteralPath $strSysnativePath)) {
                         # The C:\Windows\Sysnative path did not exist. This could happen on
@@ -13182,13 +13182,13 @@ function Invoke-CrossPlatformOSInventory {
                         # KB942615
                         return -10
                     }
-    
+
                     $ReferenceToSystemPath.Value = $strSysnativePath
                     return 0
                 } else {
                     # Either 32-bit process on 32-bit OS, or 64-bit process on 64-bit OS
                     # Need to get and return the system32 folder
-    
+
                     if (-not [string]::IsNullOrEmpty([System.Environment]::SystemDirectory)) {
                         $strWindowsSystemPath = [System.Environment]::SystemDirectory
                     } elseif (-not [string]::IsNullOrEmpty($env:windir)) {
@@ -13198,17 +13198,17 @@ function Invoke-CrossPlatformOSInventory {
                     } else {
                         return -11
                     }
-    
+
                     if (-not (Test-Path -LiteralPath $strWindowsSystemPath)) {
                         # The C:\Windows\System32 path did not exist.
                         return -12
                     }
-    
+
                     $ReferenceToSystemPath.Value = [System.Environment]::SystemDirectory
                     return 0
                 }
             }
-    
+
             function Convert-StringToFlexibleVersion {
                 # .SYNOPSIS
                 # Converts a string to a version object. However, when the string contains
@@ -13508,7 +13508,7 @@ function Invoke-CrossPlatformOSInventory {
                 # allowing it to skip the determination of the PowerShell engine version.
                 #
                 # Version: 1.0.20250218.0
-    
+
                 #region License ########################################################
                 # Copyright (c) 2025 Frank Lesniak
                 #
@@ -13531,14 +13531,14 @@ function Invoke-CrossPlatformOSInventory {
                 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
                 # USE OR OTHER DEALINGS IN THE SOFTWARE.
                 #endregion License ########################################################
-    
+
                 param (
                     [ref]$ReferenceToVersionObject = ([ref]$null),
                     [ref]$ReferenceArrayOfLeftoverStrings = ([ref]$null),
                     [string]$StringToConvert = '',
                     [version]$PSVersion = ([version]'0.0')
                 )
-    
+
                 function Convert-StringToVersionSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Version object.
@@ -13598,7 +13598,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Version object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -13622,12 +13622,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToVersionObject = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -13703,7 +13703,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -13728,14 +13728,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -13846,7 +13846,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -13875,9 +13875,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -13899,38 +13899,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToVersionObject.Value = [version]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -13939,7 +13939,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Split-StringOnLiteralString {
                     # .SYNOPSIS
                     # Splits a string into an array using a literal string as the splitter.
@@ -14011,7 +14011,7 @@ function Invoke-CrossPlatformOSInventory {
                     # converts $null to an empty string before splitting the string.
                     #
                     # Version: 3.0.20250211.1
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -14035,15 +14035,15 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [string]$StringToSplit = '',
                         [string]$Splitter = ''
                     )
-    
+
                     $strSplitterInRegEx = [regex]::Escape($Splitter)
                     $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
-    
+
                     # The following code forces the function to return an array, always,
                     # even when there are zero or one elements in the array
                     $intElementCount = 1
@@ -14066,7 +14066,7 @@ function Invoke-CrossPlatformOSInventory {
                         return ($result)
                     }
                 }
-    
+
                 function Convert-StringToInt32Safely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Int32.
@@ -14125,7 +14125,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Int32 object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -14149,12 +14149,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToInt32 = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -14230,7 +14230,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -14255,14 +14255,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -14373,7 +14373,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -14402,9 +14402,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -14426,38 +14426,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToInt32.Value = [int32]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -14466,7 +14466,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Convert-StringToInt64Safely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Int64.
@@ -14525,7 +14525,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Int64 object.
                     #
                     # Version: 1.0.20250215.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -14549,12 +14549,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToInt64 = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -14630,7 +14630,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -14655,14 +14655,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -14773,7 +14773,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -14802,9 +14802,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -14826,38 +14826,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToInt64.Value = [int64]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -14866,7 +14866,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Get-PSVersion {
                     # .SYNOPSIS
                     # Returns the version of PowerShell that is running.
@@ -14896,7 +14896,7 @@ function Invoke-CrossPlatformOSInventory {
                     #
                     # .NOTES
                     # Version: 1.0.20250106.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -14920,14 +14920,14 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     if (Test-Path variable:\PSVersionTable) {
                         return ($PSVersionTable.PSVersion)
                     } else {
                         return ([version]('1.0'))
                     }
                 }
-    
+
                 function Convert-StringToBigIntegerSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Numerics.BigInteger object.
@@ -14987,7 +14987,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Numerics.BigInteger object.
                     #
                     # Version: 1.0.20250216.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -15011,12 +15011,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToBigIntegerObject = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -15092,7 +15092,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -15117,14 +15117,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -15235,7 +15235,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -15264,9 +15264,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -15288,38 +15288,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToBigIntegerObject.Value = [System.Numerics.BigInteger]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -15328,7 +15328,7 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 function Convert-StringToDoubleSafely {
                     # .SYNOPSIS
                     # Attempts to convert a string to a System.Double.
@@ -15387,7 +15387,7 @@ function Invoke-CrossPlatformOSInventory {
                     # to a System.Double object.
                     #
                     # Version: 1.0.20250216.0
-    
+
                     #region License ####################################################
                     # Copyright (c) 2025 Frank Lesniak
                     #
@@ -15411,12 +15411,12 @@ function Invoke-CrossPlatformOSInventory {
                     # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     # SOFTWARE.
                     #endregion License ####################################################
-    
+
                     param (
                         [ref]$ReferenceToDouble = ([ref]$null),
                         [string]$StringToConvert = ''
                     )
-    
+
                     #region FunctionsToSupportErrorHandling ############################
                     function Get-ReferenceToLastError {
                         # .SYNOPSIS
@@ -15492,7 +15492,7 @@ function Invoke-CrossPlatformOSInventory {
                         #
                         # .NOTES
                         # Version: 2.0.20250215.1
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -15517,14 +15517,14 @@ function Invoke-CrossPlatformOSInventory {
                         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
                         # OTHER DEALINGS IN THE SOFTWARE.
                         #endregion License ################################################
-    
+
                         if ($Error.Count -gt 0) {
                             return ([ref]($Error[0]))
                         } else {
                             return ([ref]$null)
                         }
                     }
-    
+
                     function Test-ErrorOccurred {
                         # .SYNOPSIS
                         # Checks to see if an error occurred during a time period, i.e.,
@@ -15635,7 +15635,7 @@ function Invoke-CrossPlatformOSInventory {
                         # ReferenceToLaterError must be a reference to $null ([ref]$null).
                         #
                         # Version: 2.0.20250215.0
-    
+
                         #region License ################################################
                         # Copyright (c) 2025 Frank Lesniak
                         #
@@ -15664,9 +15664,9 @@ function Invoke-CrossPlatformOSInventory {
                             [ref]$ReferenceToEarlierError = ([ref]$null),
                             [ref]$ReferenceToLaterError = ([ref]$null)
                         )
-    
+
                         # TODO: Validate input
-    
+
                         $boolErrorOccurred = $false
                         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                             # Both not $null
@@ -15688,38 +15688,38 @@ function Invoke-CrossPlatformOSInventory {
                                 $boolErrorOccurred = $true
                             }
                         }
-    
+
                         return $boolErrorOccurred
                     }
                     #endregion FunctionsToSupportErrorHandling ############################
-    
+
                     trap {
                         # Intentionally left empty to prevent terminating errors from
                         # halting processing
                     }
-    
+
                     # Retrieve the newest error on the stack prior to doing work
                     $refLastKnownError = Get-ReferenceToLastError
-    
+
                     # Store current error preference; we will restore it after we do the
                     # work of this function
                     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
                     # Set ErrorActionPreference to SilentlyContinue; this will suppress
                     # error output. Terminating errors will not output anything, kick to
                     # the empty trap statement and then continue on. Likewise, non-
                     # terminating errors will also not output anything, but they do not
                     # kick to the trap statement; they simply continue on.
                     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
                     $ReferenceToDouble.Value = [double]$StringToConvert
-    
+
                     # Restore the former error preference
                     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
                     # Retrieve the newest error on the error stack
                     $refNewestCurrentError = Get-ReferenceToLastError
-    
+
                     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                         # Error occurred; return failure indicator:
                         return $false
@@ -15728,39 +15728,39 @@ function Invoke-CrossPlatformOSInventory {
                         return $true
                     }
                 }
-    
+
                 $ReferenceArrayOfLeftoverStrings.Value = @('', '', '', '', '')
-    
+
                 $boolResult = Convert-StringToVersionSafely -ReferenceToVersionObject $ReferenceToVersionObject -StringToConvert $StringToConvert
-    
+
                 if ($boolResult) {
                     return 0
                 }
-    
+
                 # If we are still here, the conversion was not successful.
-    
+
                 $arrVersionElements = Split-StringOnLiteralString -StringToSplit $StringToConvert -Splitter '.'
                 $intCountOfVersionElements = $arrVersionElements.Count
-    
+
                 if ($intCountOfVersionElements -lt 2) {
                     # You can't have a version with less than two elements
                     return -1
                 }
-    
+
                 if ($intCountOfVersionElements -ge 5) {
                     $strExcessVersionElements = [string]::join('.', $arrVersionElements[4..($intCountOfVersionElements - 1)])
                 } else {
                     $strExcessVersionElements = ''
                 }
-    
+
                 if ($intCountOfVersionElements -ge 3) {
                     $intElementInQuestion = 3
                 } else {
                     $intElementInQuestion = $intCountOfVersionElements
                 }
-    
+
                 $boolConversionSuccessful = $false
-    
+
                 # See if excess elements are our only problem
                 if (-not [string]::IsNullOrEmpty($strExcessVersionElements)) {
                     $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..$intElementInQuestion])
@@ -15772,7 +15772,7 @@ function Invoke-CrossPlatformOSInventory {
                         ($ReferenceArrayOfLeftoverStrings.Value)[4] = $strExcessVersionElements
                     }
                 }
-    
+
                 while ($intElementInQuestion -gt 0 -and -not $boolConversionSuccessful) {
                     $strAttemptedVersion = [string]::join('.', $arrVersionElements[0..($intElementInQuestion - 1)])
                     $boolResult = $false
@@ -15856,7 +15856,7 @@ function Invoke-CrossPlatformOSInventory {
                                     } else {
                                         $versionPS = $PSVersion
                                     }
-    
+
                                     if ($versionPS.Major -ge 3) {
                                         # Use bigint
                                         $bigint = $null
@@ -15943,7 +15943,7 @@ function Invoke-CrossPlatformOSInventory {
                     }
                     $intElementInQuestion--
                 }
-    
+
                 if (-not $boolConversionSuccessful) {
                     # Conversion was not successful
                     return -1
@@ -15951,12 +15951,12 @@ function Invoke-CrossPlatformOSInventory {
                     return $intReturnValue
                 }
             }
-    
+
             trap {
                 # Intentionally left empty to prevent terminating errors from halting
                 # processing
             }
-    
+
             if ([string]::IsNullOrEmpty($OSNativeSystemPath)) {
                 $strNativeSystemPath = ''
                 $intReturnCode = Get-WindowsNativeSystemPath -ReferenceToSystemPath ([ref]$strNativeSystemPath) -OSProcessorArchitecture $OSProcessorArchitecture -ProcessProcessorArchitecture $ProcessProcessorArchitecture
@@ -15967,35 +15967,35 @@ function Invoke-CrossPlatformOSInventory {
             } else {
                 $refNativeSystemPath = [ref]$OSNativeSystemPath
             }
-    
+
             $strPathToNTOSKrnl = Join-Path -Path ($refNativeSystemPath.Value) -ChildPath 'ntoskrnl.exe'
-    
+
             # Retrieve the newest error on the stack prior to doing work
             $refLastKnownError = Get-ReferenceToLastError
-    
+
             # Store current error preference; we will restore it after we do the work of
             # this function
             $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
             # Set ErrorActionPreference to SilentlyContinue; this will suppress error
             # output. Terminating errors will not output anything, kick to the empty trap
             # statement and then continue on. Likewise, non-terminating errors will also
             # not output anything, but they do not kick to the trap statement; they simply
             # continue on.
             $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
             # Attempt to get the product version from ntoskrnl.exe
             $ReferenceToStringVersion.Value = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($strPathToNTOSKrnl).ProductVersion
-    
+
             # Restore the former error preference
             $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
             # Retrieve the newest error on the error stack
             $refNewestCurrentError = Get-ReferenceToLastError
-    
+
             if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
                 # Error occurred
-    
+
                 return -2
             } else {
                 # No error occurred
@@ -16003,7 +16003,7 @@ function Invoke-CrossPlatformOSInventory {
                     # No version information found; this is an error
                     return -3
                 }
-    
+
                 # Version information found; convert to a version object
                 $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject $ReferenceToSystemVersion -ReferenceArrayOfLeftoverStrings $ReferenceToArrayOfLeftoverStrings -StringToConvert $ReferenceToStringVersion.Value
                 if ($intReturnCode -lt 0) {
@@ -16013,13 +16013,13 @@ function Invoke-CrossPlatformOSInventory {
                 return $intReturnCode
             }
         }
-    
+
         # TODO: Move these to parameters
         $intRequirementForMajorVersionNumber = 6
         $intRequirementForMinorVersionNumber = 6
         $intRequirementForBuildVersionNumber = 6
         $intRequirementForRevisionVersionNumber = 4
-    
+
         $boolMethod1 = $true
         $boolMethod2 = $true
         $boolMethod3 = $true
@@ -16029,7 +16029,7 @@ function Invoke-CrossPlatformOSInventory {
         $boolMethod7 = $true
         $boolMethod8 = $true
         $boolMethod9 = $true
-    
+
         $intFunctionReturn = 0
         $strOSVersionStaging = ''
         $intOSMajor = -1
@@ -16040,12 +16040,12 @@ function Invoke-CrossPlatformOSInventory {
         $intOSBuildCurrentLevelOfAccuracy = -1
         $intOSRevision = -1
         $intOSRevisionCurrentLevelOfAccuracy = -1
-    
+
         $intWorkingAccuracyTargetForMajor = $intRequirementForMajorVersionNumber
         $intWorkingAccuracyTargetForMinor = $intRequirementForMinorVersionNumber
         $intWorkingAccuracyTargetForBuild = $intRequirementForBuildVersionNumber
         $intWorkingAccuracyTargetForRevision = $intRequirementForRevisionVersionNumber
-    
+
         if ($intWorkingAccuracyTargetForMajor -eq -1 -and $intWorkingAccuracyTargetForMinor -ge 0) {
             # Can't do minor without major
             $intFunctionReturn = -1
@@ -16062,7 +16062,7 @@ function Invoke-CrossPlatformOSInventory {
             # If major and minor are in play, can't omit build but allow revision
             $intFunctionReturn = -1
         }
-    
+
         # #############################################################################
         $intThisMethodNumber = 1 # (Win32 -> RtlGetVersion)
         if ($intFunctionReturn -ge 0) {
@@ -16071,7 +16071,7 @@ function Invoke-CrossPlatformOSInventory {
                 $boolMethodSucceeded = $False # Not implemented
             }
         }
-    
+
         # #############################################################################
         $intThisMethodNumber = 2 # (WMI -> Win32_OperatingSystem)
         $intThisMethodMajorLevelOfAccuracy = 7
@@ -16147,7 +16147,7 @@ function Invoke-CrossPlatformOSInventory {
                 }
             }
         }
-    
+
         # #############################################################################
         $intThisMethodNumber = 3 # ("Product version" of the file
         #                           C:\Windows\Sysnative\ntoskrnl.exe or
@@ -16235,7 +16235,7 @@ function Invoke-CrossPlatformOSInventory {
                 }
             }
         }
-    
+
         # #############################################################################
         $intThisMethodNumber = 4 # cmd /c ver > temp file
         $intThisMethodMajorLevelOfAccuracy = 6
@@ -16311,7 +16311,7 @@ function Invoke-CrossPlatformOSInventory {
                 }
             }
         }
-    
+
         # #############################################################################
         $intThisMethodNumber = 5 # (Version of the file
         #                          C:\Windows\Sysnative\ntoskrnl.exe or
@@ -16322,9 +16322,9 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 3/7;
         #                                        else 2/7)
         $intThisMethodRevisionLevelOfAccuracy = 3
-    
+
         # TODO: Implement this
-    
+
         # #############################################################################
         $intThisMethodNumber = 6 #6a: "Product version" of
         #                             C:\Windows\Sysnative\kernel32.dll or
@@ -16335,9 +16335,9 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 7/7;
         #                                        else 3/7)
         $intThisMethodRevisionLevelOfAccuracy = 4
-    
+
         # TODO: Implement this
-    
+
         # #############################################################################
         $intThisMethodNumber = 6 #6b: "Product version" of
         #                             C:\Windows\Sysnative\ntdll.dll or
@@ -16348,9 +16348,9 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 7/7;
         #                                        else 3/7)
         $intThisMethodRevisionLevelOfAccuracy = 3
-    
+
         # TODO: Implement this
-    
+
         # #############################################################################
         $intThisMethodNumber = 6 #6c: "Product version" of C:\Windows\Sysnative\hal.dll
         #                             or C:\Windows\System32\hal.dll
@@ -16360,9 +16360,9 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 7/7;
         #                                        else 3/7)
         $intThisMethodRevisionLevelOfAccuracy = 2
-    
+
         # TODO: Implement this
-    
+
         # #############################################################################
         $intThisMethodNumber = 7 #7a: File version of C:\Windows\Sysnative\kernel32.dll
         #                             or C:\Windows\System32\kernel32.dll
@@ -16372,9 +16372,9 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 3/7;
         #                                        else 2/7)
         $intThisMethodRevisionLevelOfAccuracy = 2
-    
+
         # TODO: Implement this
-    
+
         # #############################################################################
         $intThisMethodNumber = 7 #7b: File version of C:\Windows\Sysnative\ntdll.dll or
         #                             C:\Windows\System32\ntdll.dll
@@ -16384,9 +16384,9 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 3/7;
         #                                        else 2/7)
         $intThisMethodRevisionLevelOfAccuracy = 1
-    
+
         # TODO: Implement this
-    
+
         # #############################################################################
         $intThisMethodNumber = 7 #7c: File version of C:\Windows\Sysnative\hal.dll or
         #                             C:\Windows\System32\hal.dll
@@ -16396,7 +16396,7 @@ function Invoke-CrossPlatformOSInventory {
         #                                        Minor = 0, and Build < 18362, 3/7;
         #                                        else 2/7)
         $intThisMethodRevisionLevelOfAccuracy = 1
-    
+
         # TODO: Implement registry: https://superuser.com/a/1160428/334370
         # HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion ->
         #       CurrentMajorVersionNumber (DWORD, not tamper-proof, Windows 10 only)
@@ -16418,7 +16418,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # Other reference:
         #   https://gist.github.com/SevenLayerJedi/c0415c03cab1ff51aa49d2f4d708f265
-    
+
         if ($intFunctionReturn -ge 0) {
             # No error has occurred
             # Check for failures to deliver required accuracy levels
@@ -16459,7 +16459,7 @@ function Invoke-CrossPlatformOSInventory {
                 }
             }
         }
-    
+
         if ($intFunctionReturn -ge 0) {
             # No error has occurred
             # Build positive return code that conveys accuracy levels
@@ -16470,7 +16470,7 @@ function Invoke-CrossPlatformOSInventory {
                 $intTempLevelOfAccuracy = $intOSMajorCurrentLevelOfAccuracy
             }
             $intFunctionReturn = $intFunctionReturn + ($intReturnMultiplier * $intTempLevelOfAccuracy)
-    
+
             $intReturnMultiplier = 0x00100000
             if ($intOSMinorCurrentLevelOfAccuracy -eq -1) {
                 $intTempLevelOfAccuracy = 0
@@ -16478,7 +16478,7 @@ function Invoke-CrossPlatformOSInventory {
                 $intTempLevelOfAccuracy = $intOSMinorCurrentLevelOfAccuracy
             }
             $intFunctionReturn = $intFunctionReturn + ($intReturnMultiplier * $intTempLevelOfAccuracy)
-    
+
             $intReturnMultiplier = 0x00010000
             if ($intOSBuildCurrentLevelOfAccuracy -eq -1) {
                 $intTempLevelOfAccuracy = 0
@@ -16486,7 +16486,7 @@ function Invoke-CrossPlatformOSInventory {
                 $intTempLevelOfAccuracy = $intOSBuildCurrentLevelOfAccuracy
             }
             $intFunctionReturn = $intFunctionReturn + ($intReturnMultiplier * $intTempLevelOfAccuracy)
-    
+
             $intReturnMultiplier = 0x00001000
             if ($intOSRevisionCurrentLevelOfAccuracy -eq -1) {
                 $intTempLevelOfAccuracy = 0
@@ -16495,7 +16495,7 @@ function Invoke-CrossPlatformOSInventory {
             }
             $intFunctionReturn = $intFunctionReturn + ($intReturnMultiplier * $intTempLevelOfAccuracy)
         }
-    
+
         if ($intFunctionReturn -ge 0) {
             # No error has occurred
             # Build version string to return
@@ -16521,14 +16521,14 @@ function Invoke-CrossPlatformOSInventory {
                 }
             }
         }
-    
+
         if ($intFunctionReturn -ge 0) {
             $ReferenceToStringVersion.Value = $strOSVersionStaging
         }
-    
+
         return $intFunctionReturn
     }
-    
+
     function Get-WindowsOSSKU {
         # .SYNOPSIS
         # Gets the Windows operating system SKU from WMI
@@ -16571,7 +16571,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # .NOTES
         # Version: 1.0.20250407.1
-    
+
         #region License ############################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -16593,12 +16593,12 @@ function Invoke-CrossPlatformOSInventory {
         # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ############################################################
-    
+
         param (
             [ref]$ReferenceToOSSKU = ([ref]$null),
             [version]$PSVersion = ([version]'0.0')
         )
-    
+
         #region FunctionsToSupportErrorHandling ####################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
@@ -16674,7 +16674,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 2.0.20250215.1
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -16699,14 +16699,14 @@ function Invoke-CrossPlatformOSInventory {
             # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
             # OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ################################################
-    
+
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
             } else {
                 return ([ref]$null)
             }
         }
-    
+
         function Test-ErrorOccurred {
             # .SYNOPSIS
             # Checks to see if an error occurred during a time period, i.e.,
@@ -16817,7 +16817,7 @@ function Invoke-CrossPlatformOSInventory {
             # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
             # Version: 2.0.20250215.0
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -16846,9 +16846,9 @@ function Invoke-CrossPlatformOSInventory {
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
             )
-    
+
             # TODO: Validate input
-    
+
             $boolErrorOccurred = $false
             if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                 # Both not $null
@@ -16870,11 +16870,11 @@ function Invoke-CrossPlatformOSInventory {
                     $boolErrorOccurred = $true
                 }
             }
-    
+
             return $boolErrorOccurred
         }
         #endregion FunctionsToSupportErrorHandling ####################################
-    
+
         function Get-PSVersion {
             # .SYNOPSIS
             # Returns the version of PowerShell that is running.
@@ -16904,7 +16904,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250106.0
-    
+
             #region License ####################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -16928,40 +16928,40 @@ function Invoke-CrossPlatformOSInventory {
             # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ####################################################
-    
+
             if (Test-Path variable:\PSVersionTable) {
                 return ($PSVersionTable.PSVersion)
             } else {
                 return ([version]('1.0'))
             }
         }
-    
+
         trap {
             # Intentionally left empty to prevent terminating errors from halting
             # processing
         }
-    
+
         if ($PSVersion -ne ([version]'0.0')) {
             $refPSVersion = [ref]$PSVersion
         } else {
             $versionPS = Get-PSVersion
             $refPSVersion = [ref]$versionPS
         }
-    
+
         # Retrieve the newest error on the stack prior to doing work
         $refLastKnownError = Get-ReferenceToLastError
-    
+
         # Store current error preference; we will restore it after we do the work of
         # this function
         $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
         # Set ErrorActionPreference to SilentlyContinue; this will suppress error
         # output. Terminating errors will not output anything, kick to the empty trap
         # statement and then continue on. Likewise, non-terminating errors will also
         # not output anything, but they do not kick to the trap statement; they simply
         # continue on.
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
         # The below line is a "one liner" version of the following code; it must be one
         # line in order for error handling to work correctly!
         ###############################################################################
@@ -16987,32 +16987,32 @@ function Invoke-CrossPlatformOSInventory {
         # }
         ###############################################################################
         $intFunctionReturn = 0; if (($refPSVersion.Value).Major -ge 3) { $arrCIMInstanceOS = @(Get-CimInstance -Query "Select OperatingSystemSKU from Win32_OperatingSystem"); if ($arrCIMInstanceOS.Count -eq 0) { return -1 }; $ReferenceToOSSKU.Value = ($arrCIMInstanceOS[0]).OperatingSystemSKU; if ($arrCIMInstanceOS.Count -gt 1) { $intFunctionReturn += 1 } } else { $arrManagementObjectOS = @(Get-WmiObject -Query "Select OperatingSystemSKU from Win32_OperatingSystem"); if ($arrManagementObjectOS.Count -eq 0) { return -2 }; $ReferenceToOSSKU.Value = ($arrManagementObjectOS[0]).OperatingSystemSKU; if ($arrManagementObjectOS.Count -gt 1) { $intFunctionReturn += 2 } }
-    
+
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
         # Retrieve the newest error on the error stack
         $refNewestCurrentError = Get-ReferenceToLastError
-    
+
         if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
             # Error occurred
-    
+
             # Return failure indicator:
             return -3
         } else {
             # No error occurred
-    
+
             # Operating system SKU is stored in
             # $ReferenceToOSSKU.Value
             if ([string]::IsNullOrEmpty($ReferenceToOSSKU.Value)) {
                 # No SKU information found; this is an error
                 return -4
             }
-    
+
             return 0
         }
     }
-    
+
     function Get-WindowsOSServicePack {
         # .SYNOPSIS
         # Gets the Windows operating system service pack from WMI
@@ -17055,7 +17055,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # .NOTES
         # Version: 1.0.20250407.0
-    
+
         #region License ############################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -17077,12 +17077,12 @@ function Invoke-CrossPlatformOSInventory {
         # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ############################################################
-    
+
         param (
             [ref]$ReferenceToOSServicePack = ([ref]$null),
             [version]$PSVersion = ([version]'0.0')
         )
-    
+
         #region FunctionsToSupportErrorHandling ####################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
@@ -17158,7 +17158,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 2.0.20250215.1
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -17183,14 +17183,14 @@ function Invoke-CrossPlatformOSInventory {
             # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
             # OTHER DEALINGS IN THE SOFTWARE.
             #endregion License ################################################
-    
+
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
             } else {
                 return ([ref]$null)
             }
         }
-    
+
         function Test-ErrorOccurred {
             # .SYNOPSIS
             # Checks to see if an error occurred during a time period, i.e.,
@@ -17301,7 +17301,7 @@ function Invoke-CrossPlatformOSInventory {
             # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
             # Version: 2.0.20250215.0
-    
+
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -17330,9 +17330,9 @@ function Invoke-CrossPlatformOSInventory {
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
             )
-    
+
             # TODO: Validate input
-    
+
             $boolErrorOccurred = $false
             if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                 # Both not $null
@@ -17354,11 +17354,11 @@ function Invoke-CrossPlatformOSInventory {
                     $boolErrorOccurred = $true
                 }
             }
-    
+
             return $boolErrorOccurred
         }
         #endregion FunctionsToSupportErrorHandling ####################################
-    
+
         function Get-PSVersion {
             # .SYNOPSIS
             # Returns the version of PowerShell that is running.
@@ -17388,7 +17388,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # .NOTES
             # Version: 1.0.20250106.0
-    
+
             #region License ####################################################
             # Copyright (c) 2025 Frank Lesniak
             #
@@ -17412,40 +17412,40 @@ function Invoke-CrossPlatformOSInventory {
             # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ####################################################
-    
+
             if (Test-Path variable:\PSVersionTable) {
                 return ($PSVersionTable.PSVersion)
             } else {
                 return ([version]('1.0'))
             }
         }
-    
+
         trap {
             # Intentionally left empty to prevent terminating errors from halting
             # processing
         }
-    
+
         if ($PSVersion -ne ([version]'0.0')) {
             $refPSVersion = [ref]$PSVersion
         } else {
             $versionPS = Get-PSVersion
             $refPSVersion = [ref]$versionPS
         }
-    
+
         # Retrieve the newest error on the stack prior to doing work
         $refLastKnownError = Get-ReferenceToLastError
-    
+
         # Store current error preference; we will restore it after we do the work of
         # this function
         $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
         # Set ErrorActionPreference to SilentlyContinue; this will suppress error
         # output. Terminating errors will not output anything, kick to the empty trap
         # statement and then continue on. Likewise, non-terminating errors will also
         # not output anything, but they do not kick to the trap statement; they simply
         # continue on.
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
         # The below line is a "one liner" version of the following code; it must be one
         # line in order for error handling to work correctly!
         ###############################################################################
@@ -17471,32 +17471,32 @@ function Invoke-CrossPlatformOSInventory {
         # }
         ###############################################################################
         $intFunctionReturn = 0; if (($refPSVersion.Value).Major -ge 3) { $arrCIMInstanceOS = @(Get-CimInstance -Query "Select ServicePackMajorVersion from Win32_OperatingSystem"); if ($arrCIMInstanceOS.Count -eq 0) { return -1 }; $ReferenceToOSServicePack.Value = ($arrCIMInstanceOS[0]).ServicePackMajorVersion; if ($arrCIMInstanceOS.Count -gt 1) { $intFunctionReturn += 1 } } else { $arrManagementObjectOS = @(Get-WmiObject -Query "Select ServicePackMajorVersion from Win32_OperatingSystem"); if ($arrManagementObjectOS.Count -eq 0) { return -2 }; $ReferenceToOSServicePack.Value = ($arrManagementObjectOS[0]).ServicePackMajorVersion; if ($arrManagementObjectOS.Count -gt 1) { $intFunctionReturn += 2 } }
-    
+
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
         # Retrieve the newest error on the error stack
         $refNewestCurrentError = Get-ReferenceToLastError
-    
+
         if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
             # Error occurred
-    
+
             # Return failure indicator:
             return -3
         } else {
             # No error occurred
-    
+
             # Operating system service pack is stored in
             # $ReferenceToOSServicePack.Value
             if ([string]::IsNullOrEmpty($ReferenceToOSServicePack.Value)) {
                 # No service pack information found; this is an error
                 return -4
             }
-    
+
             return 0
         }
     }
-    
+
     function Split-StringOnLiteralString {
         # .SYNOPSIS
         # Splits a string into an array using a literal string as the splitter.
@@ -17568,7 +17568,7 @@ function Invoke-CrossPlatformOSInventory {
         # converts $null to an empty string before splitting the string.
         #
         # Version: 3.0.20250211.1
-    
+
         #region License ####################################################
         # Copyright (c) 2025 Frank Lesniak
         #
@@ -17592,15 +17592,15 @@ function Invoke-CrossPlatformOSInventory {
         # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
         #endregion License ####################################################
-    
+
         param (
             [string]$StringToSplit = '',
             [string]$Splitter = ''
         )
-    
+
         $strSplitterInRegEx = [regex]::Escape($Splitter)
         $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
-    
+
         # The following code forces the function to return an array, always,
         # even when there are zero or one elements in the array
         $intElementCount = 1
@@ -17648,7 +17648,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # Version: 1.0.20241003.0
         #endregion FunctionHeader #########################################################
-    
+
         #region License ################################################################
         # Copyright (c) 2024 Frank Lesniak
         #
@@ -17669,7 +17669,7 @@ function Invoke-CrossPlatformOSInventory {
         # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
         # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################################
-    
+
         #region FunctionsToSupportErrorHandling ########################################
         function Get-ReferenceToLastError {
             #region FunctionHeader #####################################################
@@ -17679,7 +17679,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # Version: 1.0.20240127.0
             #endregion FunctionHeader #####################################################
-    
+
             #region License ############################################################
             # Copyright (c) 2024 Frank Lesniak
             #
@@ -17701,19 +17701,19 @@ function Invoke-CrossPlatformOSInventory {
             # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ############################################################
-    
+
             #region DownloadLocationNotice #############################################
             # The most up-to-date version of this script can be found on the author's
             # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
             #endregion DownloadLocationNotice #############################################
-    
+
             if ($error.Count -gt 0) {
                 [ref]($error[0])
             } else {
                 $null
             }
         }
-    
+
         function Test-ErrorOccurred {
             #region FunctionHeader #####################################################
             # Function accepts two positional arguments:
@@ -17729,7 +17729,7 @@ function Invoke-CrossPlatformOSInventory {
             #
             # Version: 1.0.20240127.0
             #endregion FunctionHeader #####################################################
-    
+
             #region License ############################################################
             # Copyright (c) 2024 Frank Lesniak
             #
@@ -17751,14 +17751,14 @@ function Invoke-CrossPlatformOSInventory {
             # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             # SOFTWARE.
             #endregion License ############################################################
-    
+
             #region DownloadLocationNotice #############################################
             # The most up-to-date version of this script can be found on the author's
             # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
             #endregion DownloadLocationNotice #############################################
-    
+
             # TO-DO: Validate input
-    
+
             $boolErrorOccurred = $false
             if (($null -ne ($args[0])) -and ($null -ne ($args[1]))) {
                 # Both not $null
@@ -17777,50 +17777,50 @@ function Invoke-CrossPlatformOSInventory {
                     $boolErrorOccurred
                 }
             }
-    
+
             $boolErrorOccurred
         }
         #endregion FunctionsToSupportErrorHandling ########################################
-    
+
         trap {
             # Intentionally left empty to prevent terminating errors from halting
             # processing
         }
-    
+
         $refOutput = $args[0]
-    
+
         # Retrieve the newest error on the stack prior to doing work
         $refLastKnownError = Get-ReferenceToLastError
-    
+
         # Store current error preference; we will restore it after we do the work of this
         # function
         $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
-    
+
         # Set ErrorActionPreference to SilentlyContinue; this will suppress error output.
         # Terminating errors will not output anything, kick to the empty trap statement and
         # then continue on. Likewise, non-terminating errors will also not output anything,
         # but they do not kick to the trap statement; they simply continue on.
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-    
+
         $output = & ($args[1])
-    
+
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
-    
+
         # Retrieve the newest error on the error stack
         $refNewestCurrentError = Get-ReferenceToLastError
-    
+
         if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
             # Error occurred
-    
+
             # Return failure indicator:
             return $false
         } else {
             # No error occurred
-    
+
             # Return data by reference:
             $refOutput.Value = $output
-    
+
             # Return success indicator:
             return $true
         }
