@@ -18475,7 +18475,7 @@ function Invoke-CrossPlatformOSInventory {
         #
         # OSKernelVersion: Maps to VERSION_ID from uname, or fetch directly
         if ($hashtableOSInfo.ContainsKey('KERNEL_VERSION')) {
-            $kernelVersion = $hashtableOSInfo['KERNEL_VERSION']
+            $strKernelVersion = $hashtableOSInfo['KERNEL_VERSION']
         } else {
             $boolSuccess = Invoke-CommandSafely ([ref]$strKernelVersion) { uname -r *>&1 }
             if ($boolSuccess -eq $false) {
