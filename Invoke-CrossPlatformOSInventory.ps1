@@ -17624,6 +17624,208 @@ function Invoke-CrossPlatformOSInventory {
         }
     }
 
+    function Invoke-CommandSafely {
+        #region FunctionHeader #########################################################
+        # This function runs a command "safely" by surpressing errors, if any. If the
+        # command is successful, it returns the output of the command by reference.
+        #
+        # Two positional arguments are required:
+        #
+        # The first argument is a reference to an object, typically a string object if a
+        # console command is being run, which will be used to store the command's
+        # output.
+        #
+        # The second argument is a scriptblock object that contains the command to be run.
+        #
+        # The function returns $true if the process completed successfully; $false
+        # otherwise
+        #
+        # Example usage:
+        # $strOutput = [string]
+        # $boolSuccess = Invoke-CommandSafely ([ref]$strOutput) {wmic os get caption}
+        # # The above command returns $true, and the output of the command is stored in
+        # # $strOutput
+        #
+        # Version: 1.0.20241003.0
+        #endregion FunctionHeader #########################################################
+    
+        #region License ################################################################
+        # Copyright (c) 2024 Frank Lesniak
+        #
+        # Permission is hereby granted, free of charge, to any person obtaining a copy of
+        # this software and associated documentation files (the "Software"), to deal in the
+        # Software without restriction, including without limitation the rights to use,
+        # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+        # Software, and to permit persons to whom the Software is furnished to do so,
+        # subject to the following conditions:
+        #
+        # The above copyright notice and this permission notice shall be included in all
+        # copies or substantial portions of the Software.
+        #
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+        # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+        # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+        # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+        # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        #endregion License ################################################################
+    
+        #region FunctionsToSupportErrorHandling ########################################
+        function Get-ReferenceToLastError {
+            #region FunctionHeader #####################################################
+            # Function returns $null if no errors on on the $error stack;
+            # Otherwise, function returns a reference (memory pointer) to the last error
+            # that occurred.
+            #
+            # Version: 1.0.20240127.0
+            #endregion FunctionHeader #####################################################
+    
+            #region License ############################################################
+            # Copyright (c) 2024 Frank Lesniak
+            #
+            # Permission is hereby granted, free of charge, to any person obtaining a copy
+            # of this software and associated documentation files (the "Software"), to deal
+            # in the Software without restriction, including without limitation the rights
+            # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the Software is
+            # furnished to do so, subject to the following conditions:
+            #
+            # The above copyright notice and this permission notice shall be included in
+            # all copies or substantial portions of the Software.
+            #
+            # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+            # SOFTWARE.
+            #endregion License ############################################################
+    
+            #region DownloadLocationNotice #############################################
+            # The most up-to-date version of this script can be found on the author's
+            # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
+            #endregion DownloadLocationNotice #############################################
+    
+            if ($error.Count -gt 0) {
+                [ref]($error[0])
+            } else {
+                $null
+            }
+        }
+    
+        function Test-ErrorOccurred {
+            #region FunctionHeader #####################################################
+            # Function accepts two positional arguments:
+            #
+            # The first argument is a reference (memory pointer) to the last error that had
+            # occurred prior to calling the command in question - that is, the command that
+            # we want to test to see if an error occurred.
+            #
+            # The second argument is a reference to the last error that had occurred as-of
+            # the completion of the command in question.
+            #
+            # Function returns $true if it appears that an error occurred; $false otherwise
+            #
+            # Version: 1.0.20240127.0
+            #endregion FunctionHeader #####################################################
+    
+            #region License ############################################################
+            # Copyright (c) 2024 Frank Lesniak
+            #
+            # Permission is hereby granted, free of charge, to any person obtaining a copy
+            # of this software and associated documentation files (the "Software"), to deal
+            # in the Software without restriction, including without limitation the rights
+            # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the Software is
+            # furnished to do so, subject to the following conditions:
+            #
+            # The above copyright notice and this permission notice shall be included in
+            # all copies or substantial portions of the Software.
+            #
+            # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+            # SOFTWARE.
+            #endregion License ############################################################
+    
+            #region DownloadLocationNotice #############################################
+            # The most up-to-date version of this script can be found on the author's
+            # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
+            #endregion DownloadLocationNotice #############################################
+    
+            # TO-DO: Validate input
+    
+            $boolErrorOccurred = $false
+            if (($null -ne ($args[0])) -and ($null -ne ($args[1]))) {
+                # Both not $null
+                if ((($args[0]).Value) -ne (($args[1]).Value)) {
+                    $boolErrorOccurred = $true
+                }
+            } else {
+                # One is $null, or both are $null
+                # NOTE: ($args[0]) could be non-null, while ($args[1])
+                # could be null if $error was cleared; this does not indicate an error.
+                # So:
+                # If both are null, no error
+                # If ($args[0]) is null and ($args[1]) is non-null, error
+                # If ($args[0]) is non-null and ($args[1]) is null, no error
+                if (($null -eq ($args[0])) -and ($null -ne ($args[1]))) {
+                    $boolErrorOccurred
+                }
+            }
+    
+            $boolErrorOccurred
+        }
+        #endregion FunctionsToSupportErrorHandling ########################################
+    
+        trap {
+            # Intentionally left empty to prevent terminating errors from halting
+            # processing
+        }
+    
+        $refOutput = $args[0]
+    
+        # Retrieve the newest error on the stack prior to doing work
+        $refLastKnownError = Get-ReferenceToLastError
+    
+        # Store current error preference; we will restore it after we do the work of this
+        # function
+        $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+    
+        # Set ErrorActionPreference to SilentlyContinue; this will suppress error output.
+        # Terminating errors will not output anything, kick to the empty trap statement and
+        # then continue on. Likewise, non-terminating errors will also not output anything,
+        # but they do not kick to the trap statement; they simply continue on.
+        $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    
+        $output = & ($args[1])
+    
+        # Restore the former error preference
+        $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+    
+        # Retrieve the newest error on the error stack
+        $refNewestCurrentError = Get-ReferenceToLastError
+    
+        if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
+            # Error occurred
+    
+            # Return failure indicator:
+            return $false
+        } else {
+            # No error occurred
+    
+            # Return data by reference:
+            $refOutput.Value = $output
+    
+            # Return success indicator:
+            return $true
+        }
+    }
+
     $psobjectOutput = New-Object -TypeName PSObject
     $psobjectOutput | Add-Member -MemberType NoteProperty -Name 'OSType' -Value ''
     $psobjectOutput | Add-Member -MemberType NoteProperty -Name 'OSID' -Value ''
@@ -17839,7 +18041,465 @@ function Invoke-CrossPlatformOSInventory {
         $psobjectOutput.OSKernelVersion = $strKernelVersion
         $psobjectOutput.OSArchitecture = $strOSArchitecture
     } elseif ($IsLinux) {
-        # Linux-specific code goes here
+        $hashtableOSInfo = @{}
+        if (Test-Path (Join-Path '/etc' 'os-release')) {
+            # /etc/os-release exists
+            $textFileOSRelease = Get-Content (Join-Path '/etc' 'os-release')
+            $textFileOSRelease | ForEach-Object {
+                $arrLine = Split-StringOnLiteralString $_ '='
+                if ($arrLine.Count -eq 2) {
+                    # Found key-value pair
+                    $strKey = $arrLine[0]
+                    if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                        $intValueLength = ($arrLine[1]).Length
+                        if ($intValueLength -ge 2) {
+                            if ((($arrLine[1])[0] -eq '"') -and (($arrLine[1])[$intValueLength - 1] -eq '"')) {
+                                # Value is wrapped in quotation marks; remove them
+                                $strValue = ($arrLine[1]).Substring(1, $intValueLength - 2)
+                            } else {
+                                $strValue = $arrLine[1]
+                            }
+                        } else {
+                            $strValue = $arrLine[1]
+                        }
+                        $hashtableOSInfo.Add($strKey, $strValue)
+                        if (($strKey -eq 'ID') -and ($strValue -eq 'alpine')) {
+                            # Alpine special case
+                            # Get the Alpine version and store it:
+                            if (Test-Path '/etc/alpine-release') {
+                                $strAlpineVersion = Get-Content '/etc/alpine-release'
+                                $strAlpineVersion = $strAlpineVersion.Trim()
+                                $strKey = 'VERSION'
+                                $strValue = $strAlpineVersion
+                                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                                    $hashtableOSInfo.Add($strKey, $strValue)
+                                } else {
+                                    # Overwrite the existing value
+                                    $hashtableOSInfo.Item($strKey) = $strValue
+                                }
+                            }
+                            # Store the Alpine name:
+                            $strKey = 'NAME'
+                            $strValue = 'Alpine Linux'
+                            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                                $hashtableOSInfo.Add($strKey, $strValue)
+                            } else {
+                                # Overwrite the existing value
+                                $hashtableOSInfo.Item($strKey) = $strValue
+                            }
+                        } elseif (($strKey -eq 'ID') -and ($strValue -eq 'arch')) {
+                            # Arch special case
+                            $strKernelVersion = & uname --kernel-release
+                            # Store the kernel version as VERSION_ID
+                            $strKey = 'VERSION_ID'
+                            $strValue = $strKernelVersion
+                            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                                $hashtableOSInfo.Add($strKey, $strValue)
+                            } else {
+                                # Overwrite the existing value
+                                $hashtableOSInfo.Item($strKey) = $strValue
+                            }
+                            # Store the PRETTY_NAME
+                            $strKey = 'PRETTY_NAME'
+                            $strValue = 'Rolling Release'
+                            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                                $hashtableOSInfo.Add($strKey, $strValue)
+                            } else {
+                                # Overwrite the existing value
+                                $hashtableOSInfo.Item($strKey) = $strValue
+                            }
+                        }
+                    } else {
+                        # Duplicate key in hashtable
+                        # Bad entry in file; do nothing
+                    }
+                } else {
+                    # Malformed line; ignore
+                }
+            }
+        } elseif (Test-Path '/etc/alpine-release') {
+            # Get and store the version
+            $strAlpineVersion = Get-Content '/etc/alpine-release'
+            $strAlpineVersion = $strAlpineVersion.Trim()
+            $strKey = 'VERSION'
+            $strValue = $strAlpineVersion
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+            # Store the ID
+            $strKey = 'ID'
+            $strValue = 'alpine'
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+            # Store the NAME
+            $strKey = 'NAME'
+            $strValue = 'Alpine Linux'
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+        } elseif (Test-CommandExistence { lsb_release }) {
+            $strKey = 'VERSION'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { lsb_release --version --short *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            }
+            $hashtableOSInfo.Add($strKey, $strValue)
+
+            $strKey = 'NAME' # This appears to be the best match; could also be 'ID'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { lsb_release --id --short *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            }
+            $hashtableOSInfo.Add($strKey, $strValue)
+
+            $strKey = 'PRETTY_NAME'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { lsb_release --description --short *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            }
+            $hashtableOSInfo.Add($strKey, $strValue)
+
+            $strKey = 'VERSION_ID'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { lsb_release --release --short *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            }
+            $hashtableOSInfo.Add($strKey, $strValue)
+
+            $strKey = 'VERSION_CODENAME'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { lsb_release --codename --short *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            }
+            $hashtableOSInfo.Add($strKey, $strValue)
+        } elseif (Test-Path (Join-Path '/etc' 'lsb-release')) {
+            # /etc/lsb-release exists
+            $textFileOSRelease = Get-Content (Join-Path '/etc' 'lsb-release')
+            $textFileOSRelease |
+                ForEach-Object {
+                    $arrLine = Split-StringOnLiteralString $_ '='
+                    if ($arrLine.Count -eq 2) {
+                        # Found key-value pair
+                        $strKey = $arrLine[0]
+                        $intValueLength = ($arrLine[1]).Length
+                        if ($intValueLength -ge 2) {
+                            if ((($arrLine[1])[0] -eq '"') -and (($arrLine[1])[$intValueLength - 1] -eq '"')) {
+                                # Value is wrapped in quotation marks; remove them
+                                $strValue = ($arrLine[1]).Substring(1, $intValueLength - 2)
+                            } else {
+                                $strValue = $arrLine[1]
+                            }
+                        } else {
+                            $strValue = $arrLine[1]
+                        }
+                        switch ($strKey) {
+                            'DISTRIB_VERSION' {
+                                $strKey = 'VERSION'
+                            }
+                            'DISTRIB_ID' {
+                                $strKey = 'NAME'
+                            }
+                            'DISTRIB_DESCRIPTION' {
+                                $strKey = 'PRETTY_NAME'
+                            }
+                            'DISTRIB_RELEASE' {
+                                $strKey = 'VERSION_ID'
+                            }
+                            'DISTRIB_CODENAME' { 
+                                $strKey = 'VERSION_CODENAME'
+                            }
+                        }
+                        if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                            $hashtableOSInfo.Add($strKey, $strValue)
+                        } else {
+                            # Overwrite the existing value
+                            $hashtableOSInfo.Item($strKey) = $strValue
+                        }
+                    } else {
+                        # Malformed line; ignore
+                    }
+                }
+        } elseif (Test-Path (Join-Path '/etc' 'debian_version')) {
+            $strKey = 'ID_LIKE'
+            $strValue = 'debian'
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+
+            $strKey = 'NAME'
+            $boolSuccess = Invoke-CommandSafely ([ref]$strOSName) { uname -s *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strOSName = $null
+            }
+            if ($strOSName -eq 'Linux') {
+                $strValue = $strOSName
+                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                    $hashtableOSInfo.Add($strKey, $strValue)
+                } else {
+                    # Overwrite the existing value
+                    $hashtableOSInfo.Item($strKey) = $strValue
+                }
+            }
+
+            $strKey = 'VERSION_ID'
+            $boolSuccess = Invoke-CommandSafely ([ref]$strVersionID) { uname -r *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strVersionID = $null
+            } else {
+                $strValue = $strVersionID
+                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                    $hashtableOSInfo.Add($strKey, $strValue)
+                } else {
+                    # Overwrite the existing value
+                    $hashtableOSInfo.Item($strKey) = $strValue
+                }
+            }
+
+            $strKey = 'VERSION'
+            $textFileDebianVersion = Get-Content (Join-Path '/etc' 'debian_version')
+            if (-not [string]::IsNullOrEmpty($strVersionID)) {
+                $strValue = $textFileDebianVersion[0] + ' (kernel ' + $strVersionID + ')'
+            } else {
+                $strValue = $textFileDebianVersion[0]
+            }
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+
+            $strKey = 'KERNEL_BUILD_INFO'
+            $boolSuccess = Invoke-CommandSafely ([ref]$strKernelVersion) { uname -v *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strKernelVersion = $null
+            } else {
+                $strValue = $strKernelVersion
+                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                    $hashtableOSInfo.Add($strKey, $strValue)
+                } else {
+                    # Overwrite the existing value
+                    $hashtableOSInfo.Item($strKey) = $strValue
+                }
+            }
+        } elseif (Test-Path (Join-Path '/etc' 'SuSe-release')) {
+            $textFileOpenSUSEVersion = Get-Content (Join-Path '/etc' 'SuSe-release')
+            $strKey = 'PRETTY_NAME'
+            $strValue = $textFileOpenSUSEVersion[0]
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+
+            $strKey = 'ID_LIKE'
+            $strValue = 'suse'
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+
+            for ($intLineNumber = 1; $intLineNumber -lt $textFileOpenSUSEVersion.Count; $intLineNumber++) {
+                $strLine = $textFileOpenSUSEVersion[$intLineNumber]
+                $arrLine = Split-StringOnLiteralString $strLine ' = '
+                if ($arrLine.Count -ne 2) {
+                    $arrLine = Split-StringOnLiteralString $strLine '='
+                }
+                if ($arrLine.Count -eq 2) {
+                    $strKey = $arrLine[0]
+                    if ($strKey -eq 'CODENAME') {
+                        $strKey = 'VERSION_CODENAME'
+                    }
+                    $strValue = $arrLine[1]
+                    if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                        $hashtableOSInfo.Add($strKey, $strValue)
+                    } else {
+                        # Overwrite the existing value
+                        $hashtableOSInfo.Item($strKey) = $strValue
+                    }
+                }
+            }
+        } elseif (Test-Path (Join-Path '/etc' 'redhat-release')) {
+            $textFileRedHatVersion = Get-Content (Join-Path '/etc' 'redhat-release')
+            $strKey = 'PRETTY_NAME'
+            $strValue = $textFileRedHatVersion[0]
+            if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                $hashtableOSInfo.Add($strKey, $strValue)
+            } else {
+                # Overwrite the existing value
+                $hashtableOSInfo.Item($strKey) = $strValue
+            }
+        } else {
+            $strKey = 'NAME'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { uname --operating-system *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            } else {
+                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                    $hashtableOSInfo.Add($strKey, $strValue)
+                } else {
+                    # Overwrite the existing value
+                    $hashtableOSInfo.Item($strKey) = $strValue
+                }
+            }
+
+            $strKey = 'VERSION_ID'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { uname --kernel-release *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            } else {
+                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                    $hashtableOSInfo.Add($strKey, $strValue)
+                } else {
+                    # Overwrite the existing value
+                    $hashtableOSInfo.Item($strKey) = $strValue
+                }
+            }
+
+            $strKey = 'VERSION'
+            $strValue = [string]
+            $boolSuccess = Invoke-CommandSafely ([ref]$strValue) { uname --kernel-version *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strValue = $null
+            } else {
+                if ($hashtableOSInfo.ContainsKey($strKey) -eq $false) {
+                    $hashtableOSInfo.Add($strKey, $strValue)
+                } else {
+                    # Overwrite the existing value
+                    $hashtableOSInfo.Item($strKey) = $strValue
+                }
+            }
+        }
+        #
+        # Map hashtable fields to PSObject properties for Linux
+        $psobjectOutput.OSType = 'Linux'  # Static for Linux systems
+        #
+        # OSID: Maps to 'ID' from hashtable
+        if ($hashtableOSInfo.ContainsKey('ID')) {
+            $psobjectOutput.OSID = $hashtableOSInfo['ID']
+        }
+        #
+        # OSName: Maps to 'NAME' from hashtable
+        if ($hashtableOSInfo.ContainsKey('NAME')) {
+            $psobjectOutput.OSName = $hashtableOSInfo['NAME']
+        }
+        #
+        # OSPrettyName: Maps to 'PRETTY_NAME' from hashtable
+        if ($hashtableOSInfo.ContainsKey('PRETTY_NAME')) {
+            $psobjectOutput.OSPrettyName = $hashtableOSInfo['PRETTY_NAME']
+        }
+        #
+        # OSVersionString: Prefer VERSION_ID, fallback to VERSION
+        if ($hashtableOSInfo.ContainsKey('VERSION_ID')) {
+            $psobjectOutput.OSVersionString = $hashtableOSInfo['VERSION_ID']
+        } elseif ($hashtableOSInfo.ContainsKey('VERSION')) {
+            $psobjectOutput.OSVersionString = $hashtableOSInfo['VERSION']
+        }
+        #
+        # Parse OSVersionString into components (major, minor, patch)
+        if (-not [string]::IsNullOrEmpty($psobjectOutput.OSVersionString)) {
+            $arrVersionParts = Split-StringOnLiteralString -StringToSplit $psobjectOutput.OSVersionString -Splitter '.'
+            $psobjectOutput.OSVersionMajorString = $arrVersionParts[0]
+            $intOSVersionMajor = -1
+            $ref = [ref]$intOSVersionMajor
+            if ([int]::TryParse($psobjectOutput.OSVersionMajorString, $ref)) {
+                # Successfully parsed major version
+                $intOSVersionMajor = $ref.Value  # Explicitly update the variable
+                $psobjectOutput.OSVersionMajor = $intOSVersionMajor
+            }
+            if ($arrVersionParts.Count -ge 2) {
+                $psobjectOutput.OSVersionMinorString = $arrVersionParts[1]
+                $intOSVersionMinor = -1
+                $ref = [ref]$intOSVersionMinor
+                if ([int]::TryParse($psobjectOutput.OSVersionMinorString, $ref)) {
+                    # Successfully parsed minor version
+                    $intOSVersionMinor = $ref.Value  # Explicitly update the variable
+                    $psobjectOutput.OSVersionMinor = $intOSVersionMinor
+                }
+            }
+            # TODO: Ubuntu doesn't record its patch in VERSION_ID; but it's record
+            # in VERSION (e.g., '24.04.1 LTS (Noble Numbat)')
+            if ($arrVersionParts.Count -ge 3) {
+                $psobjectOutput.OSVersionPatchString = $arrVersionParts[2]
+                $intOSVersionPatch = -1
+                $ref = [ref]$intOSVersionPatch
+                if ([int]::TryParse($psobjectOutput.OSVersionPatchString, $ref)) {
+                    # Successfully parsed patch version
+                    $intOSVersionPatch = $ref.Value  # Explicitly update the variable
+                    $psobjectOutput.OSVersionPatch = $intOSVersionPatch
+                }
+            }
+        }
+        #
+        # OSBuildString: Not typically available for Linux, leave blank
+        #
+        # OSServicePack: Not applicable for Linux, leave as 0
+        #
+        # OSEdition: Infer from specific cases or leave blank
+        if ($hashtableOSInfo.ContainsKey('ID')) {
+            switch ($hashtableOSInfo.Item('ID')) {
+                'fedora' { $psobjectOutput.OSEdition = 'Workstation' }
+                'ubuntu' { if ($hashtableOSInfo['PRETTY_NAME'] -match 'LTS') { $psobjectOutput.OSEdition = 'LTS' } }
+            }
+        }
+        #
+        # OSSKU: Not applicable for Linux, leave as 0
+        #
+        # OSCodename: Maps to VERSION_CODENAME if available
+        if ($hashtableOSInfo.ContainsKey('VERSION_CODENAME')) {
+            $psobjectOutput.OSCodename = $hashtableOSInfo['VERSION_CODENAME']
+        }
+        #
+        # OSKernelVersion: Maps to VERSION_ID from uname, or fetch directly
+        if ($hashtableOSInfo.ContainsKey('KERNEL_VERSION')) {
+            $kernelVersion = $hashtableOSInfo['KERNEL_VERSION']
+        } else {
+            $boolSuccess = Invoke-CommandSafely ([ref]$strKernelVersion) { uname -r *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strKernelVersion = ''
+            }
+        }
+        $psobjectOutput.OSKernelVersion = $strKernelVersion
+
+        # OSArchitecture: Fetch from uname -m if not in hashtable
+        if ($hashtableOSInfo.ContainsKey('ARCHITECTURE')) {
+            $psobjectOutput.OSArchitecture = $hashtableOSInfo['ARCHITECTURE']
+        } else {
+            $strArchitecture = ''
+            $boolSuccess = Invoke-CommandSafely ([ref]$strArchitecture) { uname -m *>&1 }
+            if ($boolSuccess -eq $false) {
+                $strArchitecture = ''
+            }
+            # Normalize common architecture names
+            switch ($strArchitecture) {
+                'x86_64' { $psobjectOutput.OSArchitecture = 'x86-64' }
+                'aarch64' { $psobjectOutput.OSArchitecture = 'arm64' }
+                default { $psobjectOutput.OSArchitecture = $strArchitecture }
+            }
+        }
     } else {
         # Unsupported OS
     }
